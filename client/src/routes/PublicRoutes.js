@@ -1,0 +1,28 @@
+import React from "react";
+import Forbidden from "../pages/Forbidden";
+import ForgotPassword from "../pages/ForgotPassword";
+import InternalServerError from "../pages/InternalServerError";
+import LockScreen from "../pages/LockScreen";
+import NotFound from "../pages/NotFound";
+import ServiceUnavailable from "../pages/ServiceUnavailable";
+import Signin from "../pages/Signin";
+import Signup from "../pages/Signup";
+import VerifyAccount from "../pages/VerifyAccount";
+
+import Home from "../pages/Home";
+
+
+const publicRoutes = [
+  { path: "signin", element: <Signin /> },
+  { path: "signup", element: <Signup /> },
+  { path: "pages/verify", element: <VerifyAccount /> },
+  { path: "pages/forgot", element: <ForgotPassword /> },
+  { path: "pages/lock", element: <LockScreen /> },
+  { path: "error/404", element: <NotFound /> },
+  { path: "error/500", element: <InternalServerError /> },
+  { path: "error/503", element: <ServiceUnavailable /> },
+  { path: "error/505", element: <Forbidden /> },
+  { path: "/", element: <Home />},
+];
+
+export default publicRoutes;

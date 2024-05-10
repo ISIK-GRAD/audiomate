@@ -1,14 +1,51 @@
 {
-  "name": "client",
+  "name": "Audiomate",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "homepage": "http://localhost:3000",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "start443": "react-scripts start --port=443",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "react": "^18.2.0"
+    "@react-aria/ssr": "^3.9.3",
+    "bootstrap": "^5.3.3",
+    "formik": "^2.4.6",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.10.2",
+    "react-perfect-scrollbar": "^1.5.8",
+    "react-router-dom": "^6.23.1",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.77.0",
+    "yup": "^1.4.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.0",
+    "sass": "^1.57.1"
   }
 }
