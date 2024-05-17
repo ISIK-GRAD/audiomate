@@ -1,93 +1,71 @@
-import React, { Component } from "react";
-import { Link, NavLink} from "react-router-dom";
+import React, { useContext, useRef, useEffect } from "react";
+import { Link, NavLink } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import userAvatar from "../assets/img/img1.jpg";
+import { UserContext } from '../context/UserContext'; // Import UserContext
 import {
     dashboardMenu,
+    applicationsMenu,
+    pagesMenu,
+    uiElementsMenu
 } from "../data/Menu";
 
-const {FetchStatus} = require("../service/NetworkService");
-const networkService = require("../service/NetworkService");
+export default function Sidebar() {
+    const { user } = useContext(UserContext); // Get user from context
+    const scrollBarRef = useRef(null); // Use useRef hook
 
-export default class Sidebar extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            userData: null,
-        };
-    }
-
-    toggleFooterMenu = (e) => {
+    const toggleFooterMenu = (e) => {
         e.preventDefault();
         let parent = e.target.closest(".sidebar");
         parent.classList.toggle("footer-menu-show");
     }
 
-    render() {
-        const { userData } = this.state;
-        return (
-            <div className="sidebar">
-                <div className="sidebar-header">
-                    <Link to="/" className="sidebar-logo">HR Hub</Link>
+    const updateScroll = () => {
+        if (scrollBarRef.current) {
+            scrollBarRef.current.updateScroll();
+        }
+    }
+
+    return (
+        <div className="sidebar">
+            <div className="sidebar-header">
+                <Link to="/" className="sidebar-logo">audiomate</Link>
+            </div>
+            <PerfectScrollbar className="sidebar-body" ref={scrollBarRef}>
+                <SidebarMenu onUpdateSize={updateScroll} />
+            </PerfectScrollbar>
+            <div className="sidebar-footer">
+                <div className="sidebar-footer-top">
+                    <div className="sidebar-footer-thumb">
+                        <img src={userAvatar} alt="" />
+                    </div>
+                    <div className="sidebar-footer-body">
+                        <h6><Link to="../pages/profile.html">{user.username}</Link></h6>
+                        <p>Premium Member</p>
+                    </div>
+                    <Link onClick={toggleFooterMenu} to="" className="dropdown-link"><i className="ri-arrow-down-s-line"></i></Link>
                 </div>
-                <PerfectScrollbar className="sidebar-body" ref={ref => this._scrollBarRef = ref}>
-                    <SidebarMenu userRole={this.state.userRole} onUpdateSize={() => this._scrollBarRef.updateScroll()} />
-                </PerfectScrollbar>
-                <div className="sidebar-footer">
-                    <div className="sidebar-footer-top">
-                        <div className="sidebar-footer-thumb">
-                            <img src={userAvatar} alt="" />
-                        </div>
-                        <div className="sidebar-footer-body">
-                            <h6><Link to="../profile">{userData ? `${userData.firstName} ${userData.lastName}` : 'Visitor'}</Link></h6>
-                            
-                        </div>
-                        <Link onClick={this.toggleFooterMenu} to="" className="dropdown-link"><i className="ri-arrow-down-s-line"></i></Link>
-                    </div>
-                    <div className="sidebar-footer-menu">
-                        <nav className="nav">
-                            <Link to="../profile"><i className="ri-edit-2-line"></i> Edit Profile</Link>
-                            <Link to="../profile"><i className="ri-profile-line"></i> View Profile</Link>
-                        </nav>
-                        <hr />
-                        <nav className="nav">
-                            <Link to=""><i className="ri-question-line"></i> Help Center</Link>
-                            <Link to=""><i className="ri-lock-line"></i> Privacy Settings</Link>
-                            <Link to=""><i className="ri-user-settings-line"></i> Account Settings</Link>
-                            <Link to=""><i className="ri-logout-box-r-line"></i> Log Out</Link>
-                        </nav>
-                    </div>
+                <div className="sidebar-footer-menu">
+                    <nav className="nav">
+                        <Link to=""><i className="ri-edit-2-line"></i> Edit Profile</Link>
+                        <Link to=""><i className="ri-profile-line"></i> View Profile</Link>
+                    </nav>
+                    <hr />
+                    <nav className="nav">
+                        <Link to=""><i className="ri-question-line"></i> Help Center</Link>
+                        <Link to=""><i className="ri-lock-line"></i> Privacy Settings</Link>
+                        <Link to=""><i className="ri-user-settings-line"></i> Account Settings</Link>
+                        <Link to=""><i className="ri-logout-box-r-line"></i> Log Out</Link>
+                    </nav>
                 </div>
             </div>
-        )
-    }
+        </div>
+    );
 }
 
-class SidebarMenu extends Component {
-    populateMenu = (m) => {
-        const {userRole} = this.props;
+function SidebarMenu({ onUpdateSize }) {
+    const populateMenu = (m) => {
         const menu = m.map((m, key) => {
-            if(userRole ==="Tenant Manager" && m.label === "Tenants"){
-                m.label = "My Tenant";
-            }
-            if(userRole ==="Tenant Manager" && m.label === "Masters"){
-               return null;
-            }
-           
-            if (userRole === "User" && (m.label === "Tenants" || m.label === "My Tenant" || m.label ==="Masters") ) {
-                return null; // Don't render this menu item
-            }
-
-            if((userRole !== "Super Master" && userRole !== "Master") && (m.label === "Companies"))
-                return null;
-
-            if(userRole !== "Super Master" && userRole !== "Master" && userRole !== "HR Manager" && m.label === "User Dashboard")
-                return null;
-
-            if(userRole !== "Super Master" && userRole !== "Master" && m.label === "Company")
-                return null;
-
             let sm;
             if (m.submenu) {
                 sm = m.submenu.map((sm, key) => {
@@ -96,13 +74,13 @@ class SidebarMenu extends Component {
                     )
                 })
             }
-           
+
             return (
                 <li key={key} className="nav-item">
                     {(!sm) ? (
                         <NavLink to={m.link} className="nav-link"><i className={m.icon}></i> <span>{m.label}</span></NavLink>
                     ) : (
-                        <div onClick={this.toggleSubMenu} className="nav-link has-sub"><i className={m.icon}></i> <span>{m.label}</span></div>
+                        <div onClick={toggleSubMenu} className="nav-link has-sub"><i className={m.icon}></i> <span>{m.label}</span></div>
                     )}
                     {m.submenu && <nav className="nav nav-sub">{sm}</nav>}
                 </li>
@@ -117,17 +95,17 @@ class SidebarMenu extends Component {
     }
 
     // Toggle menu group
-    toggleMenu = (e) => {
+    const toggleMenu = (e) => {
         e.preventDefault();
 
         let parent = e.target.closest('.nav-group');
         parent.classList.toggle('show');
 
-        this.props.onUpdateSize();
+        onUpdateSize();
     }
 
     // Toggle submenu while closing siblings' submenu
-    toggleSubMenu = (e) => {
+    const toggleSubMenu = (e) => {
         e.preventDefault();
 
         let parent = e.target.closest('.nav-item');
@@ -141,32 +119,29 @@ class SidebarMenu extends Component {
 
         parent.classList.toggle('show');
 
-        this.props.onUpdateSize();
+        onUpdateSize();
     }
 
-    render() {
-        return (
-            <React.Fragment>
-                <div className="nav-group show" style={{ marginTop: '10px' }}>
-                   
-                    {this.populateMenu(dashboardMenu)}
-                </div>
-
-                {/* <div className="nav-group show">
-                    <div className="nav-label" onClick={this.toggleMenu}>Applications</div>
-                    {this.populateMenu(applicationsMenu)}
-                </div>
-                <div className="nav-group show">
-                    <div className="nav-label" onClick={this.toggleMenu}>Pages</div>
-                    {this.populateMenu(pagesMenu)}
-                </div>
-                <div className="nav-group show">
-                    <div className="nav-label" onClick={this.toggleMenu}>UI Elements</div>
-                    {this.populateMenu(uiElementsMenu)}
-                </div> */}
-            </React.Fragment>
-        )
-    }
+    return (
+        <React.Fragment>
+            <div className="nav-group show">
+                <div className="nav-label" onClick={toggleMenu}>Dashboard</div>
+                {populateMenu(dashboardMenu)}
+            </div>
+            <div className="nav-group show">
+                <div className="nav-label" onClick={toggleMenu}>Applications</div>
+                {populateMenu(applicationsMenu)}
+            </div>
+            <div className="nav-group show">
+                <div className="nav-label" onClick={toggleMenu}>Pages</div>
+                {populateMenu(pagesMenu)}
+            </div>
+            <div className="nav-group show">
+                <div className="nav-label" onClick={toggleMenu}>UI Elements</div>
+                {populateMenu(uiElementsMenu)}
+            </div>
+        </React.Fragment>
+    )
 }
 
 window.addEventListener("click", function (e) {

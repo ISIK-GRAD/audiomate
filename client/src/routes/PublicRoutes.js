@@ -6,23 +6,23 @@ import LockScreen from "../pages/LockScreen";
 import NotFound from "../pages/NotFound";
 import ServiceUnavailable from "../pages/ServiceUnavailable";
 import Signin from "../pages/Signin";
+import Signin2 from "../pages/Signin2";
 import Signup from "../pages/Signup";
+import Signup2 from "../pages/Signup2";
 import VerifyAccount from "../pages/VerifyAccount";
 
-import Home from "../pages/Home";
-
-
 const publicRoutes = [
-  { path: "signin", element: <Signin /> },
-  { path: "signup", element: <Signup /> },
+  { path: "pages/signin", element: <Signin /> },
+  { path: "pages/signin2", element: <Signin2 /> },
+  { path: "pages/signup", element: <Signup /> },
+  { path: "pages/signup2", element: <Signup2 /> },
   { path: "pages/verify", element: <VerifyAccount /> },
   { path: "pages/forgot", element: <ForgotPassword /> },
   { path: "pages/lock", element: <LockScreen /> },
-  { path: "error/404", element: <NotFound /> },
-  { path: "error/500", element: <InternalServerError /> },
-  { path: "error/503", element: <ServiceUnavailable /> },
-  { path: "error/505", element: <Forbidden /> },
-  { path: "/", element: <Home />},
+  { path: "pages/error-404", element: <NotFound /> },
+  { path: "pages/error-500", element: <InternalServerError /> },
+  { path: "pages/error-503", element: <ServiceUnavailable /> },
+  { path: "pages/error-505", element: <Forbidden /> }
 ];
 
 export default publicRoutes;

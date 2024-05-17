@@ -19,11 +19,7 @@ import img15 from "../assets/img/img15.jpg";
 import img16 from "../assets/img/img16.jpg";
 import img19 from "../assets/img/img19.jpg";
 
-import NetworkService from "../service/NetworkService";
-
 export default function People() {
-
-
   return (
     <React.Fragment>
       <HeaderMobile />

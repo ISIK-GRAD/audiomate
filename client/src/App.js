@@ -2,8 +2,9 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Main from './layouts/Main';
 import NotFound from "./pages/NotFound";
-
-import Home from "./pages/Home";
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
+import { UserProvider } from './context/UserContext'; // Import UserProvider
 
 import publicRoutes from "./routes/PublicRoutes";
 import protectedRoutes from "./routes/ProtectedRoutes";
@@ -13,7 +14,6 @@ import "./assets/css/remixicon.css";
 
 // import scss
 import "./scss/style.scss";
-
 
 // set skin on load
 window.addEventListener("load", function () {
@@ -27,36 +27,36 @@ window.addEventListener("load", function () {
 
 export default function App() {
   return (
-    <React.Fragment>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/home" element={<Home />}></Route>
-          <Route path="/" element={<Main />}>
-            <Route index element={<Home />} />
-
-            {protectedRoutes.map((route, index) => {
+    <UserProvider> {/* Wrap the app with UserProvider */}
+      <React.Fragment>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Main />}>
+              {protectedRoutes.map((route, index) => {
+                return (
+                  <Route
+                    path={route.path}
+                    element={route.element}
+                    key={index}
+                  />
+                );
+              })}
+            </Route>
+            {publicRoutes.map((route, index) => {
               return (
                 <Route
                   path={route.path}
                   element={route.element}
                   key={index}
                 />
-              )
+              );
             })}
-            </Route>
-          {publicRoutes.map((route, index) => {
-            return (
-              <Route
-                path={route.path}
-                element={route.element}
-                key={index}
-              />
-            )
-          })}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </React.Fragment>
-    
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </React.Fragment>
+    </UserProvider>
   );
 }

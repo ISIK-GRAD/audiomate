@@ -1,26 +1,11 @@
-import React, { useState } from "react";
-import CrimsTrojanLogo from "../assets/img/CrimsTrojanLogo.png";
+import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
-  const [isHovering, setIsHovering] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-  };
-
-  const imgStyle = {
-    width: '100px',
-    height: 'auto',
-    borderRadius: '50%', // Adding this to create rounded corners
-  };
-
   return (
     <div className="main-footer">
-    
+      <span>&copy; 2023. audiomate. All Rights Reserved.</span>
+      <span>Created by: <Link to="http://themepixels.me" target="_blank">Themepixels</Link></span>
     </div>
-  );
+  )
 }

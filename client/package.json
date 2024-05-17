@@ -1,30 +1,59 @@
 {
-  "name": "Audiomate",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "homepage": "http://localhost:3000",
+  "name": "audiomate-react",
+  "homepage": "http://audiomate-react.themepixels.me",
+  "version": "1.0.2",
   "private": true,
+  "dependencies": {
+    "@fullcalendar/core": "^6.1.4",
+    "@fullcalendar/daygrid": "^6.1.4",
+    "@fullcalendar/react": "^6.1.4",
+    "@fullcalendar/timegrid": "^6.1.4",
+    "@react-jvectormap/core": "^1.0.4",
+    "@react-jvectormap/unitedstates": "^1.0.1",
+    "@react-jvectormap/world": "^1.1.2",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "apexcharts": "^3.37.0",
+    "bootstrap": "^5.2.3",
+    "chart.js": "^4.2.0",
+    "cryptofont": "^0.1.1",
+    "dompurify": "^2.4.3",
+    "feather-icons": "^4.29.0",
+    "gridjs": "^6.0.6",
+    "gridjs-react": "^6.0.1",
+    "jquery": "^3.6.3",
+    "leaflet": "^1.9.3",
+    "moment": "^2.29.4",
+    "node-sass": "^8.0.0",
+    "perfect-scrollbar": "^1.5.5",
+    "prismjs": "^1.29.0",
+    "react": "^18.2.0",
+    "react-apexcharts": "^1.4.0",
+    "react-bootstrap": "^2.7.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-color": "^2.19.3",
+    "react-datepicker": "^4.10.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.0",
+    "react-perfect-scrollbar": "^1.5.8",
+    "react-quill": "^2.0.0",
+    "react-router-dom": "^6.7.0",
+    "react-scripts": "^5.0.1",
+    "react-select": "^5.7.0",
+    "web-vitals": "^2.1.4"
+  },
   "scripts": {
     "start": "react-scripts start",
-    "start443": "react-scripts start --port=443",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@react-aria/ssr": "^3.9.3",
-    "bootstrap": "^5.3.3",
-    "formik": "^2.4.6",
-    "react": "^18.2.0",
-    "react-bootstrap": "^2.10.2",
-    "react-perfect-scrollbar": "^1.5.8",
-    "react-router-dom": "^6.23.1",
-    "react-scripts": "^5.0.1",
-    "sass": "^1.77.0",
-    "yup": "^1.4.0"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -38,14 +67,9 @@
       "last 1 safari version"
     ]
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "devDependencies": {
     "@types/leaflet": "^1.9.0",
+    "babel-plugin-prismjs": "^2.1.0",
     "sass": "^1.57.1"
   }
 }

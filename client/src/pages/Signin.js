@@ -1,200 +1,96 @@
-import React from "react";
-import {useEffect, useState} from "react";
-import { Button, Card,Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-const fetchConfig = require("../config/fetchConfig.json");
-
-const {host, port} = fetchConfig;
-const fetchAddress = `http://${host}:${port}`;
-const networkService = require("../service/NetworkService");
+import React, { useState, useContext } from "react";
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from '../context/UserContext'; // Import UserContext
 
 export default function Signin() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const { setUser } = useContext(UserContext); // Get setUser from UserContext
+  const navigate = useNavigate();
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [error, setError] = useState(null);
-    const [textFieldColor, setTextFieldColor] = useState('');
-    const [shouldFetchData, setShouldFetchData] = useState(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const navigate = useNavigate(); 
-
-    useEffect(() => {
-        if(!shouldFetchData) return;
-
-        // TODO Re-connect this to the server API once the CORS problems are solved
-        /* fetch("http://127.0.0.1:9000/api/checkLoggedInStatus", {
-            method: "post",
-            credentials: "include",
-            mode: "cors",
-            headers: {
-                "Content-Type": "text-xml",
-                "Access-Control-Request-Method": "POST",
-                "Access-Control-Request-Headers": "X-PINGOTHER, Content-Type",
-
-            }
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log(data.isLoggedIn);
-                if(data.status === "success" && data.isLoggedIn)
-                {
-                    setIsLoggedIn(true);
-                }
-                else
-                {
-                    setIsLoggedIn(false);
-                }
-                console.log(data.status);
-            })
-            .catch((error) =>
-            {
-                console.error("Error checking logged in status: ", error);
-                setIsLoggedIn(false);
-                setError("authentication-error");
-            });
-            setShouldFetchData(false); */
-
-            if(localStorage.getItem("userId")){   
-                setIsLoggedIn(true);
-            }
-            else{
-                setIsLoggedIn(false);
-            }
-        }, [shouldFetchData]);
-
-
-    const handleSwitchAccount = () => {
-        if(! localStorage.getItem("userId")) return;
-        localStorage.removeItem("userId");
-        setIsLoggedIn(false);
-        navigate("/signin"); 
-        };
-    
-    const handleSignOut = async () => {
-        if(! localStorage.getItem("userId")) return;
-        const userId = localStorage.getItem("userId");
-        localStorage.removeItem("userId");
-        setIsLoggedIn(false);
-        await networkService.logout(userId);
-        navigate("/signin");
-    };
-
-    if(error === "authentication-error") {
-        return (
-            <div className="page-sign">
-            <Card className="card-sign">
-                <Card.Header>
-                <Link to="/" className="header-logo mb-4">HR Hub</Link>
-                <Card.Title>Authentication Error</Card.Title>
-                <Card.Text>Something went wrong with authentication. Please try again.</Card.Text>
-                </Card.Header>
-                <Card.Body>
-                <p>Please click the button below to return to the login page:</p>
-                <Button variant="primary" onClick={handleReturnToLogin(navigate, setError, setIsLoggedIn)}>Return to Login</Button>
-                </Card.Body>
-            </Card>
-            </div>
-        );
-    }
-
-    if(isLoggedIn) {
-        return (
-            <div className="page-sign">
-              <Card className="card-sign">
-                <Card.Header>
-                  <Link to="/" className="header-logo mb-4">HR Hub</Link>
-                  <Card.Title className="text-warning mt-3">Already Logged In</Card.Title>
-                </Card.Header>
-                <Card.Body >
-                  <p className="text-primary-light">Do you want to switch to another account or sign out?</p>
-                  <Button variant="primary" onClick={handleSwitchAccount}>Switch Account</Button>
-                  <Button variant="secondary" onClick={handleSignOut} className="button mt-3">Sign Out</Button>
-          
-                  <div className="text-center mt-3"> {/* Add text-center class here */}
-                    <Link to="/">Return To Home</Link>
-                  </div>
-                </Card.Body>
-              </Card>
-            </div>
-          );
-    }
-
-    return (
-        <div className="page-sign">
-        <Card className="card-sign">
-            <Card.Header>
-            <Link to="/" className="header-logo mb-4">HR Hub</Link>
-            <Card.Title>Sign In</Card.Title>
-            <Card.Text>Welcome back! Please signin to continue.</Card.Text>
-            </Card.Header>
-            <Card.Body>
-            <Form method="post" onSubmit={(e) => handleSubmit(fetchAddress, e, navigate, setError, setTextFieldColor)}>
-                <div className="mb-4">
-                <Form.Label >Email address</Form.Label>
-                <Form.Control style={{borderColor: textFieldColor}} type="text" placeholder="Enter your email address" name="email"/>
-                </div>
-                <div className="mb-4">
-                <Form.Label className="d-flex justify-content-between">Password <Link to=""></Link></Form.Label>
-                <Form.Control style={{borderColor: textFieldColor}} type="password" placeholder="Enter your password" name="password"/>
-                </div>
-
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <Button type="submit" variant="primary" className="btn-sign">Sign In</Button>
-
-                
-
-                
-            </Form>
-            </Card.Body>
-        </Card>
-        </div>
-    )
-}
-
-const handleReturnToLogin = (navigate, setError, setIsLoggedIn) => {
-    setError(null);
-    setIsLoggedIn(false);
-    navigate("/signin");
-}
-
-const handleSubmit = (fetchAddress, event, navigate, setError, setTextFieldColor) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const formDataJson = {};
-    formData.forEach((value, key) => {
-        formDataJson[key] = value;
+    const response = await fetch('http://localhost:3001/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, password })
     });
 
-    fetch(`${fetchAddress}/api/authenticate-client`, {
-        method : 'post',
-        body: JSON.stringify(formDataJson),
-        headers: {
-            'Content-Type' : 'application/json'
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        if(data.status === "success")
-        {   
-            localStorage.setItem("userId", data.userId);
-            navigate('/pages/lock');
-        }
+    const data = await response.json();
 
-        if(data.status === "invalidCredentials")
-        {
-            setError('Login failed, please check your credentials.')
-            setTextFieldColor('red');
-            navigate('/signin');
-        }
-        if(data.status === "accessDenied"){
-            setError("Your account has been disabled. Please contact your administrator.");
-            setTextFieldColor('red');
-            navigate("/signin");
-        }
-    })
-    .catch((error) => {
-    	console.log("authentication error: ", error);
-        navigate("/error/503");
-    });
+    if (response.ok) {
+      console.log("Sign-in successful", data); // Log successful sign-in
+      setUser(data.user); // Store user data in context
+      localStorage.setItem('user', JSON.stringify(data.user)); // Store user data in localStorage
+      navigate('/'); // Redirect to the main page
+    } else {
+      console.error("Sign-in error", data); // Log error
+      setMessage(`Error: ${data.message || data}`);
+    }
+  };
+
+  return (
+    <div className="page-sign">
+      <Card className="card-sign">
+        <Card.Header>
+          <Link to="/" className="header-logo mb-4">audiomate</Link>
+          <Card.Title>Sign In</Card.Title>
+          <Card.Text>Welcome back! Please sign in to continue.</Card.Text>
+        </Card.Header>
+        <Card.Body>
+          <Form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <Form.Label>Email address</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="mb-4">
+              <Form.Label className="d-flex justify-content-between">
+                Password <Link to="">Forgot password?</Link>
+              </Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" variant="primary" className="btn-sign">
+              Sign In
+            </Button>
+            {message && <div className="mt-3">{message}</div>}
+
+            <div className="divider">
+              <span>or sign in with</span>
+            </div>
+
+            <Row className="gx-2">
+              <Col>
+                <Button variant="" className="btn-facebook">
+                  <i className="ri-facebook-fill"></i> Facebook
+                </Button>
+              </Col>
+              <Col>
+                <Button variant="" className="btn-google">
+                  <i className="ri-google-fill"></i> Google
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </Card.Body>
+        <Card.Footer>
+          Don't have an account? <Link to="/pages/signup">Create an Account</Link>
+        </Card.Footer>
+      </Card>
+    </div>
+  );
 }
-
