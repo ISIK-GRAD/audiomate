@@ -1,11 +1,18 @@
 const { Sequelize } = require('sequelize');
+const databaseConfig = require("../config/databaseConfig.json");
+
 
 // Initialize Sequelize
-const sequelize = new Sequelize('audiomateUSERS', 'root', 'root', {
-  host: 'localhost',
-  port: 8889,
-  dialect: 'mysql'
-});
+const sequelize = new Sequelize(
+  databaseConfig.databaseName, 
+  databaseConfig.user, 
+  databaseConfig.password, 
+  {
+    host: databaseConfig.host,
+    port: databaseConfig.port,
+    dialect: 'mysql'
+  }
+);
 
 // Test the connection
 sequelize.authenticate()
