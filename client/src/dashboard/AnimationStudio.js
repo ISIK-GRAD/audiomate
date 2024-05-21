@@ -1,20 +1,188 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Card, Col, Row, Form, ProgressBar } from "react-bootstrap";
 import Header from "../layouts/Header";
 import Footer from "../layouts/Footer";
 import { Link } from "react-router-dom";
+import * as THREE from "three";
+import { GUI } from 'dat.gui';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 export default function UploadAudio() {
   const [audioFile, setAudioFile] = useState(null);
   const [progress, setProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [animationSettings, setAnimationSettings] = useState({
-    color: "#000000",
-    speed: 1,
-    shape: "circle",
-    size: 50,
+  const [audioContext, setAudioContext] = useState(null);
+  const [analyser, setAnalyser] = useState(null);
+  const [dataArray, setDataArray] = useState(null);
+  const [settings, setSettings] = useState({
+    particleColor: '#00ff00',
+    particleSize: 1.0,
+    particleCount: 512,
+    radius: 10,
+    glitch: false,
   });
-  const [animationPreview, setAnimationPreview] = useState(null);
+  const canvasRef = useRef();
+  const audioRef = useRef();
+  const guiContainerRef = useRef();
+
+  useEffect(() => {
+    if (canvasRef.current && audioRef.current && analyser) {
+      // Setup scene
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, canvasRef.current.clientWidth / canvasRef.current.clientHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, antialias: true });
+      renderer.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+
+      // Orbit controls for better interaction
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+      const pointLight = new THREE.PointLight(0xffffff, 1);
+      pointLight.position.set(50, 50, 50);
+      scene.add(pointLight);
+
+      // Post-processing
+      const composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      const glitchPass = new GlitchPass();
+      composer.addPass(glitchPass);
+
+      // Create particles
+      const particleCount = settings.particleCount;
+      const particles = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+      const sizes = new Float32Array(particleCount);
+
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (i / particleCount) * Math.PI * 2;
+        const x = Math.cos(angle) * settings.radius;
+        const y = Math.sin(angle) * settings.radius;
+        const z = Math.random() * 20 - 10;
+
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
+
+        colors[i * 3] = 0.5;
+        colors[i * 3 + 1] = 0.5;
+        colors[i * 3 + 2] = 0.5;
+
+        sizes[i] = settings.particleSize;
+      }
+
+      particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      particles.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+      const material = new THREE.PointsMaterial({
+        size: settings.particleSize,
+        vertexColors: true,
+        color: settings.particleColor,
+        transparent: true,
+        opacity: 0.75,
+      });
+
+      const particleSystem = new THREE.Points(particles, material);
+      scene.add(particleSystem);
+
+      camera.position.z = 30;
+
+      const animate = () => {
+        requestAnimationFrame(animate);
+
+        analyser.getByteFrequencyData(dataArray);
+
+        const positions = particleSystem.geometry.attributes.position.array;
+        const colors = particleSystem.geometry.attributes.color.array;
+        const sizes = particleSystem.geometry.attributes.size.array;
+        for (let i = 0; i < particleCount; i++) {
+          const index = i * 3;
+          const scale = dataArray[i % dataArray.length] / 128;
+          positions[index + 2] = scale * 20;
+          colors[index] = scale;
+          colors[index + 1] = 1 - scale;
+          colors[index + 2] = scale / 2;
+          sizes[i] = settings.particleSize * scale;
+        }
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+        particleSystem.geometry.attributes.color.needsUpdate = true;
+        particleSystem.geometry.attributes.size.needsUpdate = true;
+
+        controls.update();
+        composer.render();
+      };
+      animate();
+
+      // GUI for user controls
+      const gui = new GUI({ autoPlace: false });
+      gui.addColor(settings, 'particleColor').name('Particle Color').onChange((value) => {
+        setSettings((prevSettings) => ({ ...prevSettings, particleColor: value }));
+        particleSystem.material.color.set(value);
+      });
+      gui.add(settings, 'particleSize', 0.1, 10.0).name('Particle Size').onChange((value) => {
+        setSettings((prevSettings) => ({ ...prevSettings, particleSize: value }));
+        particleSystem.material.size = value;
+      });
+      gui.add(settings, 'particleCount', 100, 2000).name('Particle Count').onChange((value) => {
+        setSettings((prevSettings) => ({ ...prevSettings, particleCount: value }));
+        // Update particle count
+        const newPositions = new Float32Array(value * 3);
+        const newColors = new Float32Array(value * 3);
+        const newSizes = new Float32Array(value);
+        for (let i = 0; i < value; i++) {
+          const angle = (i / value) * Math.PI * 2;
+          const x = Math.cos(angle) * settings.radius;
+          const y = Math.sin(angle) * settings.radius;
+          const z = Math.random() * 20 - 10;
+
+          newPositions[i * 3] = x;
+          newPositions[i * 3 + 1] = y;
+          newPositions[i * 3 + 2] = z;
+
+          newColors[i * 3] = 0.5;
+          newColors[i * 3 + 1] = 0.5;
+          newColors[i * 3 + 2] = 0.5;
+
+          newSizes[i] = settings.particleSize;
+        }
+        particleSystem.geometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
+        particleSystem.geometry.setAttribute('color', new THREE.BufferAttribute(newColors, 3));
+        particleSystem.geometry.setAttribute('size', new THREE.BufferAttribute(newSizes, 1));
+      });
+      gui.add(settings, 'radius', 1, 20).name('Radius').onChange((value) => {
+        setSettings((prevSettings) => ({ ...prevSettings, radius: value }));
+        // Update particle positions based on new radius
+        const positions = particleSystem.geometry.attributes.position.array;
+        for (let i = 0; i < particleCount; i++) {
+          const angle = (i / particleCount) * Math.PI * 2;
+          const x = Math.cos(angle) * value;
+          const y = Math.sin(angle) * value;
+          positions[i * 3] = x;
+          positions[i * 3 + 1] = y;
+        }
+        particleSystem.geometry.attributes.position.needsUpdate = true;
+      });
+      gui.add(settings, 'glitch').name('Glitch Effect').onChange((value) => {
+        glitchPass.enabled = value;
+        setSettings((prevSettings) => ({ ...prevSettings, glitch: value }));
+      });
+
+      guiContainerRef.current.appendChild(gui.domElement);
+
+      // Cleanup on component unmount
+      return () => {
+        gui.destroy();
+      };
+    }
+  }, [dataArray, analyser, settings]);
 
   const handleFileChange = (e) => {
     setAudioFile(e.target.files[0]);
@@ -24,23 +192,55 @@ export default function UploadAudio() {
     if (!audioFile) return;
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append("audio", audioFile);
-    formData.append("settings", JSON.stringify(animationSettings));
 
-    // Mock upload progress
-    const uploadInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(uploadInterval);
-          setIsUploading(false);
-          // TODO: Handle actual upload and response
-          setAnimationPreview("Animation Preview (based on uploaded audio and settings)");
-          return 100;
-        }
-        return prev + 10;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    setAudioContext(audioCtx);
+
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(audioFile);
+
+    reader.onload = (event) => {
+      audioCtx.decodeAudioData(event.target.result, (buffer) => {
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+
+        const analyserNode = audioCtx.createAnalyser();
+        source.connect(analyserNode);
+        analyserNode.connect(audioCtx.destination);
+
+        analyserNode.fftSize = 256;
+        const bufferLength = analyserNode.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        setAnalyser(analyserNode);
+        setDataArray(dataArray);
+
+        source.start(0);
+        audioRef.current = source;
+        setIsUploading(false);
       });
-    }, 500);
+    };
+  };
+
+  const handleDownload = () => {
+    const stream = canvasRef.current.captureStream(25);
+    const recorder = new MediaRecorder(stream);
+    const chunks = [];
+
+    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = 'visualizer.webm';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    };
+
+    recorder.start();
+    setTimeout(() => recorder.stop(), 10000); // Record for 10 seconds
   };
 
   const currentSkin = localStorage.getItem("skin-mode") ? "dark" : "";
@@ -67,14 +267,6 @@ export default function UploadAudio() {
   useEffect(() => {
     switchSkin(skin);
   }, [skin]);
-
-  const handleSettingsChange = (e) => {
-    const { name, value } = e.target;
-    setAnimationSettings({
-      ...animationSettings,
-      [name]: value,
-    });
-  };
 
   return (
     <React.Fragment>
@@ -113,7 +305,6 @@ export default function UploadAudio() {
                       </div>
                     )}
                   </Col>
-               
                   <Col xl="" className="mt-4 mt-xl-0">
                     <h5>Instructions</h5>
                     <p>
@@ -123,7 +314,9 @@ export default function UploadAudio() {
                       <br />
                       3. Wait for the upload to complete.
                       <br />
-                      4. Adjust the controller below to customize the animation.
+                      4. Use the controls to customize the visualization.
+                      <br />
+                      5. Click the download button to save the visualization as a video.
                     </p>
                   </Col>
                 </Row>
@@ -131,66 +324,12 @@ export default function UploadAudio() {
                 <Row className="g-3 mt-4">
                   <Col xl="9">
                     <h5>Canvas</h5>
-                    {animationPreview ? (
-                      <div className="animation-preview">{animationPreview}</div>
-                    ) : (
-                      <p>No animation to preview. Upload an audio file to see the animation.</p>
-                    )}
+                    <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: 'auto', backgroundColor: '#000' }} />
                   </Col>
                   <Col xl="3">
-                    <h5>Animation Controller</h5>
-                    <Form>
-                      <Form.Group controlId="animationColor" className="mb-3">
-                        <Form.Label>Color</Form.Label>
-                        <Form.Control
-                          type="color"
-                          name="color"
-                          value={animationSettings.color}
-                          onChange={handleSettingsChange}
-                        />
-                      </Form.Group>
-                      <Form.Group controlId="animationSpeed" className="mb-3">
-                        <Form.Label>Speed</Form.Label>
-                        <Form.Control
-                          type="number"
-                          name="speed"
-                          value={animationSettings.speed}
-                          onChange={handleSettingsChange}
-                          min="0.1"
-                          max="10"
-                          step="0.1"
-                        />
-                      </Form.Group>
-                      <Form.Group controlId="animationShape" className="mb-3">
-                        <Form.Label>Shape</Form.Label>
-                        <Form.Control
-                          as="select"
-                          name="shape"
-                          value={animationSettings.shape}
-                          onChange={handleSettingsChange}
-                        >
-                          <option value="circle">Circle</option>
-                          <option value="square">Square</option>
-                          <option value="triangle">Triangle</option>
-                        </Form.Control>
-                      </Form.Group>
-                      <Form.Group controlId="animationSize" className="mb-3">
-                        <Form.Label>Size</Form.Label>
-                        <Form.Control
-                          type="number"
-                          name="size"
-                          value={animationSettings.size}
-                          onChange={handleSettingsChange}
-                          min="10"
-                          max="100"
-                          step="1"
-                        />
-                      </Form.Group>
-                      <Button variant="primary" className="d-flex align-items-center gap-2">
-                        Generate<span className="d-none d-sm-inline"></span>
-                      </Button>
-                    </Form>
-                    
+                    <h5>Controls</h5>
+                    <div ref={guiContainerRef}></div>
+                    <Button variant="primary" onClick={handleDownload} className="mt-2">Download Video</Button>
                   </Col>
                 </Row>
               </Card.Body>
