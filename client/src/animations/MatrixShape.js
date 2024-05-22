@@ -1,10 +1,15 @@
 import * as THREE from "three";
-import SimplexNoise from "simplex-noise";
+import SimplexNoise from 'simplex-noise';
 
-const noise = new SimplexNoise();
+const simplex = new SimplexNoise();
+let group;
 
-const prepare = (scene, settings, gui) => {
-    const group = new THREE.Group();
+const prepare = (scene, camera) => {
+
+    group = new THREE.Group();
+    camera.position.set(0,0,100);
+    camera.lookAt(scene.position);
+    scene.add(camera);
     
     const planeGeometry = new THREE.PlaneGeometry(800, 800, 20, 20);
     const planeMaterial = new THREE.MeshLambertMaterial({
@@ -32,26 +37,40 @@ const prepare = (scene, settings, gui) => {
     const ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
     ball.position.set(0, 0, 0);
     group.add(ball);
-    
+
+
+    var spotLight = new THREE.SpotLight(0xffffff);
+    spotLight.intensity = 0.9;
+    spotLight.position.set(-10, 40, 20);
+    spotLight.lookAt(ball);
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
     scene.add(group);
 
-    return group;
 };
 
-const animate = (group, dataArray) => {
+const animate = (dataArray, composer) => {
 
-    const lowerHalfArray = dataArray.slice(0, (dataArray.length / 2) - 1);
-    const upperHalfArray = dataArray.slice((dataArray.length / 2) - 1, dataArray.length);
+    var lowerHalfArray = dataArray.slice(0, (dataArray.length/2) - 1);
+    var upperHalfArray = dataArray.slice((dataArray.length/2) - 1, dataArray.length - 1);
 
-    const lowerMax = Math.max(...lowerHalfArray);
-    const upperAvg = upperHalfArray.reduce((sum, value) => sum + value, 0) / upperHalfArray.length;
+    var lowerMax = max(lowerHalfArray);
+    var lowerAvg = avg(lowerHalfArray);
+    var upperAvg = avg(upperHalfArray);
 
-    makeRoughGround(group.children[0], modulate(upperAvg, 0, 255, 0.5, 4));
-    makeRoughGround(group.children[1], modulate(lowerMax, 0, 255, 0.5, 4));
+    var lowerMaxFr = lowerMax / lowerHalfArray.length;
+    var upperAvgFr = upperAvg / upperHalfArray.length;
 
-    makeRoughBall(group.children[2], modulate(lowerMax, 0, 255, 0, 8), modulate(upperAvg, 0, 255, 0, 4));
+    console.log("group", group);
+
+    makeRoughGround(group.children[0], modulate(upperAvgFr, 0, 1, 0.5, 4));
+    makeRoughGround(group.children[1], modulate(lowerMaxFr, 0, 1, 0.5, 4));
+    
+    makeRoughBall(group.children[2], modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 8), modulate(upperAvgFr, 0, 1, 0, 4));
 
     group.rotation.y += 0.005;
+    composer.render();
 };
 
 const makeRoughBall = (mesh, bassFr, treFr) => {
@@ -64,7 +83,7 @@ const makeRoughBall = (mesh, bassFr, treFr) => {
         const time = window.performance.now();
         vertex.normalize();
         const rf = 0.00001;
-        const distance = (offset + bassFr) + noise.noise3D(vertex.x + time * rf * 7, vertex.y + time * rf * 8, vertex.z + time * rf * 9) * amp * treFr;
+        const distance = (offset + bassFr) + simplex.noise3D(vertex.x + time * rf * 7, vertex.y + time * rf * 8, vertex.z + time * rf * 9) * amp * treFr;
         vertex.multiplyScalar(distance);
         vertex.toArray(positions, i);
     }
@@ -79,7 +98,7 @@ const makeRoughGround = (mesh, distortionFr) => {
         vertex.fromArray(positions, i);
         const amp = 2;
         const time = Date.now();
-        const distance = (noise.noise2D(vertex.x + time * 0.0003, vertex.y + time * 0.0001) + 0) * distortionFr * amp;
+        const distance = (simplex.noise2D(vertex.x + time * 0.0003, vertex.y + time * 0.0001) + 0) * distortionFr * amp;
         vertex.z = distance;
         vertex.toArray(positions, i);
     }
@@ -92,5 +111,14 @@ const modulate = (val, minVal, maxVal, outMin, outMax) => {
     const delta = outMax - outMin;
     return outMin + (fraction * delta);
 };
+
+function avg(arr){
+    var total = arr.reduce(function(sum, b) { return sum + b; });
+    return (total / arr.length);
+}
+
+function max(arr){
+    return arr.reduce(function(a, b){ return Math.max(a, b); })
+}
 
 export { prepare, animate };

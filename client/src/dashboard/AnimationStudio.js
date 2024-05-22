@@ -60,9 +60,7 @@ export default function UploadAudio() {
       // Post-processing
       const composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
-      const glitchPass = new GlitchPass();
-      composer.addPass(glitchPass);
-
+  
       const gui = new GUI({ autoPlace: false });
       // Create particles
       console.log("selected animation name:", selectedAnimation.name);
@@ -70,6 +68,8 @@ export default function UploadAudio() {
 
       switch(selectedAnimation.name){
         case "GlitchCircle":
+            const glitchPass = new GlitchPass();
+            composer.addPass(glitchPass);
             const particleSystem = GlitchCircle.prepare(settings, gui, glitchPass, setSettings);
             scene.add(particleSystem);
             camera.position.z = 30;
@@ -82,13 +82,13 @@ export default function UploadAudio() {
             
           break;
           case "MatrixShape":
-        const group = MatrixShape.prepare(scene, settings, gui);
-        const animateMatrixShape = () => {
-          analyserRef.current.getByteFrequencyData(dataArray);
-          MatrixShape.animate(group, dataArray);
-          requestAnimationFrame(animateMatrixShape);
-        }
-        animateMatrixShape();
+            MatrixShape.prepare(scene, camera);
+            const animateMatrixShape = () => {
+              analyserRef.current.getByteFrequencyData(dataArray);
+              MatrixShape.animate(dataArray, composer);
+              requestAnimationFrame(animateMatrixShape);
+            }
+            animateMatrixShape();
         break;
          
       }

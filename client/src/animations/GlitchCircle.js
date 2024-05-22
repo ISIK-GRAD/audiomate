@@ -8,13 +8,13 @@ const animate = (audioData, controls, composer, particleSystem, settings) => {
     const colors = particleSystem.geometry.attributes.color.array;
     const sizes = particleSystem.geometry.attributes.size.array;
     for (let i = 0; i < settings.particleCount; i++) {
-    const index = i * 3;
-    const scale = audioData[i % audioData.length] / 128;
-    positions[index + 2] = scale * 20;
-    colors[index] = scale;
-    colors[index + 1] = 1 - scale;
-    colors[index + 2] = scale / 2;
-    sizes[i] = settings.particleSize * scale;
+        const index = i * 3;
+        const scale = audioData[i % audioData.length] / 128;
+        positions[index + 2] = scale * 20;
+        colors[index] = scale;
+        colors[index + 1] = 1 - scale;
+        colors[index + 2] = scale / 2;
+        sizes[i] = settings.particleSize * scale;
     }
     particleSystem.geometry.attributes.position.needsUpdate = true;
     particleSystem.geometry.attributes.color.needsUpdate = true;
