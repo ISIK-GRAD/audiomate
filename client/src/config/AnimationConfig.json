@@ -1,5 +1,5 @@
 {
-    "defaultAnimationName": "MatrixShape",
+    "defaultAnimationName": "FlowingParticles",
     "GlitchCircle" : {
         "name": "GlitchCircle",
         "radius": 5,
@@ -10,5 +10,12 @@
     },
     "MatrixShape": {
         "name": "MatrixShape"
+  },
+  "FlowingParticles": {
+    "name": "FlowingParticles",
+    "particleColor": "#00ff00",
+    "particleCount": "512",
+    "particleSize": 1,
+    "flowSpeed": 0.1
   }
 }

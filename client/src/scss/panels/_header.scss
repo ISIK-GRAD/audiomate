@@ -47,16 +47,20 @@
   &:focus { color: $dark; }
 
   &::after {
-    content: '';
+    content: "";
+    display: block;
+    width: 14px;  
+    height: 14px; 
     position: absolute;
-    bottom: 3.5px;
-    right: -8px;
-    width: 6px;
-    height: 6px;
-    border-radius: 100%;
-    background-color: $primary;
+    bottom: 3px;
+    right: -20px;
+    background-image: url("../audio-ui-svgrepo-com.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
   }
 }
+
 
 .header-main {
   height: $height-header;

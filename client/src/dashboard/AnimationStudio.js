@@ -13,6 +13,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 const animationConfig = require("../config/AnimationConfig.json");
 const GlitchCircle = require("../animations/GlitchCircle");
 const MatrixShape = require("../animations/MatrixShape");
+const FlowingParticles = require("../animations/FlowingParticles");
 
 export default function UploadAudio() {
   const [audioFile, setAudioFile] = useState(null);
@@ -89,7 +90,16 @@ export default function UploadAudio() {
               requestAnimationFrame(animateMatrixShape);
             }
             animateMatrixShape();
-        break;
+            break;
+        case "FlowingParticles":
+          FlowingParticles.prepare(scene, settings, renderer);
+          const animateFlowingParticles = () => {
+            analyserRef.current.getByteFrequencyData(dataArray);
+            FlowingParticles.animate();
+            requestAnimationFrame(animateFlowingParticles);
+          }
+          animateFlowingParticles();
+          break;
          
       }
       
