@@ -10,6 +10,9 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
+const animationConfig = require("../config/AnimationConfig.json");
+const GlitchCircle = require("../animations/GlitchCircle");
+
 export default function UploadAudio() {
   const [audioFile, setAudioFile] = useState(null);
   const [progress, setProgress] = useState(0);
@@ -27,6 +30,11 @@ export default function UploadAudio() {
   const canvasRef = useRef();
   const audioRef = useRef();
   const guiContainerRef = useRef();
+  const analyserRef = useRef();
+
+  console.log("animation config:", animationConfig[animationConfig["defaultAnimationName"]]);
+
+  const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig["defaultAnimationName"]]);
 
   useEffect(() => {
     if (canvasRef.current && audioRef.current && analyser) {
@@ -54,48 +62,33 @@ export default function UploadAudio() {
       const glitchPass = new GlitchPass();
       composer.addPass(glitchPass);
 
+      const gui = new GUI({ autoPlace: false });
       // Create particles
-      const particleCount = settings.particleCount;
-      const particles = new THREE.BufferGeometry();
-      const positions = new Float32Array(particleCount * 3);
-      const colors = new Float32Array(particleCount * 3);
-      const sizes = new Float32Array(particleCount);
+      console.log("selected animation name:", selectedAnimation.name);
+      console.log("analyser ", analyserRef.current);
 
-      for (let i = 0; i < particleCount; i++) {
-        const angle = (i / particleCount) * Math.PI * 2;
-        const x = Math.cos(angle) * settings.radius;
-        const y = Math.sin(angle) * settings.radius;
-        const z = Math.random() * 20 - 10;
+      switch(selectedAnimation.name){
+        case "GlitchCircle":
+            const particleSystem = GlitchCircle.prepare(settings, gui, glitchPass, setSettings);
+            scene.add(particleSystem);
+            camera.position.z = 30;
+            const animate = () => {
 
-        positions[i * 3] = x;
-        positions[i * 3 + 1] = y;
-        positions[i * 3 + 2] = z;
+              analyserRef.current.getByteFrequencyData(dataArray);
+              GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
+              requestAnimationFrame(animate);
 
-        colors[i * 3] = 0.5;
-        colors[i * 3 + 1] = 0.5;
-        colors[i * 3 + 2] = 0.5;
-
-        sizes[i] = settings.particleSize;
+            }
+            animate();
+            
+          break;
       }
+      
+      guiContainerRef.current.appendChild(gui.domElement);
 
-      particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-      particles.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+      
 
-      const material = new THREE.PointsMaterial({
-        size: settings.particleSize,
-        vertexColors: true,
-        color: settings.particleColor,
-        transparent: true,
-        opacity: 0.75,
-      });
-
-      const particleSystem = new THREE.Points(particles, material);
-      scene.add(particleSystem);
-
-      camera.position.z = 30;
-
-      const animate = () => {
+      /* const animate = () => {
         requestAnimationFrame(animate);
 
         analyser.getByteFrequencyData(dataArray);
@@ -119,70 +112,19 @@ export default function UploadAudio() {
         controls.update();
         composer.render();
       };
-      animate();
+      animate(); */
 
-      // GUI for user controls
-      const gui = new GUI({ autoPlace: false });
-      gui.addColor(settings, 'particleColor').name('Particle Color').onChange((value) => {
-        setSettings((prevSettings) => ({ ...prevSettings, particleColor: value }));
-        particleSystem.material.color.set(value);
-      });
-      gui.add(settings, 'particleSize', 0.1, 10.0).name('Particle Size').onChange((value) => {
-        setSettings((prevSettings) => ({ ...prevSettings, particleSize: value }));
-        particleSystem.material.size = value;
-      });
-      gui.add(settings, 'particleCount', 100, 2000).name('Particle Count').onChange((value) => {
-        setSettings((prevSettings) => ({ ...prevSettings, particleCount: value }));
-        // Update particle count
-        const newPositions = new Float32Array(value * 3);
-        const newColors = new Float32Array(value * 3);
-        const newSizes = new Float32Array(value);
-        for (let i = 0; i < value; i++) {
-          const angle = (i / value) * Math.PI * 2;
-          const x = Math.cos(angle) * settings.radius;
-          const y = Math.sin(angle) * settings.radius;
-          const z = Math.random() * 20 - 10;
+      
 
-          newPositions[i * 3] = x;
-          newPositions[i * 3 + 1] = y;
-          newPositions[i * 3 + 2] = z;
-
-          newColors[i * 3] = 0.5;
-          newColors[i * 3 + 1] = 0.5;
-          newColors[i * 3 + 2] = 0.5;
-
-          newSizes[i] = settings.particleSize;
-        }
-        particleSystem.geometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
-        particleSystem.geometry.setAttribute('color', new THREE.BufferAttribute(newColors, 3));
-        particleSystem.geometry.setAttribute('size', new THREE.BufferAttribute(newSizes, 1));
-      });
-      gui.add(settings, 'radius', 1, 20).name('Radius').onChange((value) => {
-        setSettings((prevSettings) => ({ ...prevSettings, radius: value }));
-        // Update particle positions based on new radius
-        const positions = particleSystem.geometry.attributes.position.array;
-        for (let i = 0; i < particleCount; i++) {
-          const angle = (i / particleCount) * Math.PI * 2;
-          const x = Math.cos(angle) * value;
-          const y = Math.sin(angle) * value;
-          positions[i * 3] = x;
-          positions[i * 3 + 1] = y;
-        }
-        particleSystem.geometry.attributes.position.needsUpdate = true;
-      });
-      gui.add(settings, 'glitch').name('Glitch Effect').onChange((value) => {
-        glitchPass.enabled = value;
-        setSettings((prevSettings) => ({ ...prevSettings, glitch: value }));
-      });
-
-      guiContainerRef.current.appendChild(gui.domElement);
 
       // Cleanup on component unmount
       return () => {
         gui.destroy();
       };
     }
-  }, [dataArray, analyser, settings]);
+  }, [analyser]);
+
+
 
   const handleFileChange = (e) => {
     setAudioFile(e.target.files[0]);
@@ -211,8 +153,10 @@ export default function UploadAudio() {
         analyserNode.fftSize = 256;
         const bufferLength = analyserNode.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
-        setAnalyser(analyserNode);
+        analyserRef.current = analyserNode;
         setDataArray(dataArray);
+        setAnalyser(analyserNode);
+
 
         source.start(0);
         audioRef.current = source;

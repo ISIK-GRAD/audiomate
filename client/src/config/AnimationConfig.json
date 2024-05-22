@@ -1,0 +1,11 @@
+{
+    "defaultAnimationName": "GlitchCircle",
+    "GlitchCircle" : {
+        "name": "GlitchCircle",
+        "radius": 5,
+        "particleColor": "#00ff00",
+        "particleCount": "512",
+        "particleSize": 1,
+        "glitchEffect": true
+    }
+}
