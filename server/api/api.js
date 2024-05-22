@@ -8,7 +8,7 @@ const postEndPoints = {
         const databaseResponse = await databaseService.signin(email, password);
         if(databaseResponse.responseType === ResponseType.Success){
             res.status(200).json({ message: 'User signed in successfully', user: databaseResponse.data });
-            console.log(user.username + ' signed in successfully');
+            console.log(databaseResponse.data.username + ' signed in successfully');
         } 
         else if(databaseResponse.responseType === ResponseType.AccessDenied){
             return res.status(401).send('Incorrect password');

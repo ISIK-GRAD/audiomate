@@ -12,6 +12,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 const animationConfig = require("../config/AnimationConfig.json");
 const GlitchCircle = require("../animations/GlitchCircle");
+const MatrixShape = require("../animations/MatrixShape");
 
 export default function UploadAudio() {
   const [audioFile, setAudioFile] = useState(null);
@@ -72,14 +73,24 @@ export default function UploadAudio() {
             const particleSystem = GlitchCircle.prepare(settings, gui, glitchPass, setSettings);
             scene.add(particleSystem);
             camera.position.z = 30;
-            const animate = () => {
+            const animateGlitchCircle = () => {
               analyserRef.current.getByteFrequencyData(dataArray);
               GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
-              requestAnimationFrame(animate);
+              requestAnimationFrame(animateGlitchCircle);
             }
-            animate();
+            animateGlitchCircle();
             
           break;
+          case "MatrixShape":
+        const group = MatrixShape.prepare(scene, settings, gui);
+        const animateMatrixShape = () => {
+          analyserRef.current.getByteFrequencyData(dataArray);
+          MatrixShape.animate(group, dataArray);
+          requestAnimationFrame(animateMatrixShape);
+        }
+        animateMatrixShape();
+        break;
+         
       }
       
       guiContainerRef.current.appendChild(gui.domElement);

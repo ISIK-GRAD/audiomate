@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./models/index');
 const User = require('./models/user');
-const bcrypt = require('bcrypt'); // Import bcrypt
 const api = require('./api/api');
 
 // Sync all models

@@ -1,6 +1,6 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
-const databaseConfig = require('../config/databaseConfig.json');
+
 
 class DatabaseResponse {
     constructor(responseType=ResponseType.Success, data=null, message=null){

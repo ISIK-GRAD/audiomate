@@ -1,5 +1,5 @@
 {
-    "defaultAnimationName": "GlitchCircle",
+    "defaultAnimationName": "MatrixShape",
     "GlitchCircle" : {
         "name": "GlitchCircle",
         "radius": 5,
@@ -7,5 +7,8 @@
         "particleCount": "512",
         "particleSize": 1,
         "glitchEffect": true
-    }
+    },
+    "MatrixShape": {
+        "name": "MatrixShape"
+  }
 }
