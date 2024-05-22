@@ -3,13 +3,22 @@ const bcrypt = require('bcrypt');
 const databaseConfig = require('../config/databaseConfig.json');
 
 class DatabaseResponse {
-    constructor(responseType=ResponseType.Success, data=null){
+    constructor(responseType=ResponseType.Success, data=null, message=null){
         this.responseType = responseType;
         this.data = data;
+        this.message = message;
     }
 
     setResponse(responseType){
         this.responseType = responseType;
+    }
+
+    setData(data){
+        this.data = data;
+    }
+
+    setMessage(message){
+        this.message = message;
     }
 }
 
@@ -32,7 +41,8 @@ const signin = async (email, password) => {
       try {
         const user = await User.findOne({ where: { email } });
         if (!user) {
-          return res.status(401).send('User not found');
+          response.setResponse(ResponseType.AccessDenied);
+          return response;
         }
     
         // Compare the hashed password with the provided password
@@ -40,10 +50,13 @@ const signin = async (email, password) => {
         if (!isMatch) {
             response.setResponse(ResponseType.AccessDenied);
         }
+
+        response.setData({ email: user.email, username: user.username });
       } catch (err) {
         console.error('Error signing in user:', err);
         response.setResponse(ResponseType.Error);
     }
+    console.log("response: ", response);
     return response;
 }
 
@@ -68,5 +81,6 @@ const signup = async(email, password, username) => {
 
 module.exports = {
     signin,
-    signup
+    signup,
+    ResponseType
 }

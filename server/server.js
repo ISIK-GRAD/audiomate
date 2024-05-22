@@ -22,12 +22,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-api.getEndPoints.forEach((endpoint) => {
-  app.get(endpoint, api.getEndPoints[endpoint]);
+Object.entries(api.getEndPoints).forEach(([endpoint, func]) => {
+  app.get(endpoint, func);
 });
 
-api.postEndPoints.forEach((endpoint) => {
-  app.post(endpoint, api.postEndPoints[endpoint]);
+Object.entries(api.postEndPoints).forEach(([endpoint, func]) => {
+  app.post(endpoint, func);
 });
 
 // Define a POST endpoint for signin

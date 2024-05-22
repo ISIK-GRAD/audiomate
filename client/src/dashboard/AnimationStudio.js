@@ -73,11 +73,9 @@ export default function UploadAudio() {
             scene.add(particleSystem);
             camera.position.z = 30;
             const animate = () => {
-
               analyserRef.current.getByteFrequencyData(dataArray);
               GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
               requestAnimationFrame(animate);
-
             }
             animate();
             
@@ -85,37 +83,6 @@ export default function UploadAudio() {
       }
       
       guiContainerRef.current.appendChild(gui.domElement);
-
-      
-
-      /* const animate = () => {
-        requestAnimationFrame(animate);
-
-        analyser.getByteFrequencyData(dataArray);
-
-        const positions = particleSystem.geometry.attributes.position.array;
-        const colors = particleSystem.geometry.attributes.color.array;
-        const sizes = particleSystem.geometry.attributes.size.array;
-        for (let i = 0; i < particleCount; i++) {
-          const index = i * 3;
-          const scale = dataArray[i % dataArray.length] / 128;
-          positions[index + 2] = scale * 20;
-          colors[index] = scale;
-          colors[index + 1] = 1 - scale;
-          colors[index + 2] = scale / 2;
-          sizes[i] = settings.particleSize * scale;
-        }
-        particleSystem.geometry.attributes.position.needsUpdate = true;
-        particleSystem.geometry.attributes.color.needsUpdate = true;
-        particleSystem.geometry.attributes.size.needsUpdate = true;
-
-        controls.update();
-        composer.render();
-      };
-      animate(); */
-
-      
-
 
       // Cleanup on component unmount
       return () => {

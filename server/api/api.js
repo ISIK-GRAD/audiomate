@@ -6,18 +6,17 @@ const postEndPoints = {
         const { email, password } = req.body;
       
         const databaseResponse = await databaseService.signin(email, password);
-        if(databaseResponse === ResponseType.Success){
-            res.status(200).json({ message: 'User signed in successfully', user: { email: user.email, username: user.username } });
+        if(databaseResponse.responseType === ResponseType.Success){
+            res.status(200).json({ message: 'User signed in successfully', user: databaseResponse.data });
             console.log(user.username + ' signed in successfully');
         } 
-        else if(databaseResponse === ResponseType.AccessDenied){
+        else if(databaseResponse.responseType === ResponseType.AccessDenied){
             return res.status(401).send('Incorrect password');
         }
-        else if(databaseResponse === ResponseType.MissingFields){
+        else if(databaseResponse.responseType === ResponseType.MissingFields){
             return res.status(400).send('Missing required fields');
         }
-        else if(databaseResponse === ResponseType.Error){
-            console.error('Error signing in user:', err);
+        else if(databaseResponse.responseType === ResponseType.Error){
             return res.status(500).send('Server error');
         }
       },
@@ -25,16 +24,16 @@ const postEndPoints = {
         const { email, password, username } = req.body;
 
         const databaseResponse = await databaseService.signup(email, password, username);
-        if(databaseResponse === ResponseType.Success){
+        if(databaseResponse.responseType === ResponseType.Success){
             return res.status(201).json({ message: 'User registered successfully', user: { email, username } });
         }
-        else if(databaseResponse.MissingFields){
+        else if(databaseResponse.responseType === ResponseType.MissingFields){
             return res.status(400).send('Missing required fields');
         }
-        else if(databaseResponse.AlreadyExists){
+        else if(databaseResponse.responseType === ResponseType.AlreadyExists){
             return res.status(400).send('User already exists');
         }
-        else if(databaseResponse.Error){
+        else if(databaseResponse.responseType === ResponseType.Error){
             console.error('Error creating user:', err);
             return res.status(500).send('Server error');
         }
