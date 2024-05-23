@@ -583,7 +583,7 @@ export default function HelpdeskService() {
                         "id": "00035",
                         "avatar": img6,
                         "name": "Allan R. Palban",
-                        "email": "allan@themepixels.me",
+                        "email": "allan@Crims&Trojan.me",
                         "status": {
                           "badge": "success",
                           "label": "Active"
@@ -596,7 +596,7 @@ export default function HelpdeskService() {
                         "id": "00028",
                         "avatar": img8,
                         "name": "Charlene S. Plateros",
-                        "email": "charlene@themepixels.me",
+                        "email": "charlene@Crims&Trojan.me",
                         "status": {
                           "badge": "info",
                           "label": "Away"
@@ -609,7 +609,7 @@ export default function HelpdeskService() {
                         "id": "00025",
                         "avatar": img10,
                         "name": "Adrian M. Moniño",
-                        "email": "adrian@themepixels.me",
+                        "email": "adrian@Crims&Trojan.me",
                         "status": {
                           "badge": "success",
                           "label": "Active"
@@ -622,7 +622,7 @@ export default function HelpdeskService() {
                         "id": "00024",
                         "avatar": img11,
                         "name": "Marianne B. Audrey",
-                        "email": "marianne@themepixels.me",
+                        "email": "marianne@Crims&Trojan.me",
                         "status": {
                           "badge": "warning",
                           "label": "Pending"
@@ -635,7 +635,7 @@ export default function HelpdeskService() {
                         "id": "00023",
                         "avatar": img12,
                         "name": "Carlyn Y. Salomon",
-                        "email": "carlyn@themepixels.me",
+                        "email": "carlyn@Crims&Trojan.me",
                         "status": {
                           "badge": "secondary",
                           "label": "Inactive"

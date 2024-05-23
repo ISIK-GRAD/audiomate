@@ -18,7 +18,7 @@ export default function Signin2() {
               <Form method="get" action="/dashboard/finance">
                 <div className="mb-4">
                   <Form.Label>Email address</Form.Label>
-                  <Form.Control type="text" placeholder="Enter your email address" value="me@themepixels.com" />
+                  <Form.Control type="text" placeholder="Enter your email address" value="me@Crims&Trojan.com" />
                 </div>
                 <div className="mb-4">
                   <Form.Label className="d-flex justify-content-between">

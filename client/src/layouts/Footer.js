@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 export default function Footer() {
   return (
     <div className="main-footer">
-      <span>&copy; 2023. audiomate. All Rights Reserved.</span>
-      <span>Created by: <Link to="http://themepixels.me" target="_blank">Themepixels</Link></span>
+      <span>&copy; 2024. audiomate. All Rights Reserved.</span>
+      <span>Created by: <Link to="http://Crims&Trojan.me" target="_blank">Crims&Trojan</Link></span>
     </div>
   )
 }

@@ -41,7 +41,7 @@ export default function Sidebar() {
                     </div>
                     <div className="sidebar-footer-body">
                         <h6><Link to="../pages/profile.html">{user.username}</Link></h6>
-                        <p>Premium Member</p>
+                    
                     </div>
                     <Link onClick={toggleFooterMenu} to="" className="dropdown-link"><i className="ri-arrow-down-s-line"></i></Link>
                 </div>

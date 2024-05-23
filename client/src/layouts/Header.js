@@ -162,7 +162,6 @@ export default function Header({ onSkin }) {
           <div className="dropdown-menu-body">
             <div className="avatar avatar-xl online mb-3"><img src={userAvatar} alt="" /></div>
             <h5 className="mb-1 text-dark fw-semibold">{user?.username}</h5> {/* Display username */}
-            <p className="fs-sm text-secondary">Premium Member</p>
 
             <nav className="nav">
               <Link to=""><i className="ri-edit-2-line"></i> Edit Profile</Link>

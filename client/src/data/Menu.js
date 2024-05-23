@@ -11,7 +11,7 @@ const dashboardMenu = [
     "icon": "ri-calendar-todo-line"
   },
   {
-    "label": "Sales Monitoring",
+    "label": "Interactive Audio",
     "link": "/dashboard/sales",
     "icon": "ri-shopping-bag-3-line"
   },

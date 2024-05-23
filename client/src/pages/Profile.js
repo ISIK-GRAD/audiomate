@@ -137,7 +137,7 @@ export default function Profile() {
                   <div className="experience-icon"><i className="ri-suitcase-line"></i></div>
                   <div className="experience-body">
                     <h5>Front-End Developer</h5>
-                    <p>Themepixels, Inc.</p>
+                    <p>Crims&Trojan, Inc.</p>
                     <p>December 2020 - Present</p>
                     <ul className="mt-3">
                       <li>Leading on the architecture and approach on the ongoing and new Angular applications in the company;</li>
