@@ -13,7 +13,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 const animationConfig = require("../config/AnimationConfig.json");
 const GlitchCircle = require("../animations/GlitchCircle");
 const MatrixShape = require("../animations/MatrixShape");
-const FlowingParticles = require("../animations/FlowingParticles");
 
 export default function UploadAudio() {
   const [audioFile, setAudioFile] = useState(null);
@@ -33,8 +32,6 @@ export default function UploadAudio() {
   const audioRef = useRef();
   const guiContainerRef = useRef();
   const analyserRef = useRef();
-
-  console.log("animation config:", animationConfig[animationConfig["defaultAnimationName"]]);
 
   const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig["defaultAnimationName"]]);
 
@@ -61,48 +58,35 @@ export default function UploadAudio() {
       // Post-processing
       const composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
-  
+
       const gui = new GUI({ autoPlace: false });
       // Create particles
-      console.log("selected animation name:", selectedAnimation.name);
-      console.log("analyser ", analyserRef.current);
 
-      switch(selectedAnimation.name){
+      switch (selectedAnimation.name) {
         case "GlitchCircle":
-            const glitchPass = new GlitchPass();
-            composer.addPass(glitchPass);
-            const particleSystem = GlitchCircle.prepare(settings, gui, glitchPass, setSettings);
-            scene.add(particleSystem);
-            camera.position.z = 30;
-            const animateGlitchCircle = () => {
-              analyserRef.current.getByteFrequencyData(dataArray);
-              GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
-              requestAnimationFrame(animateGlitchCircle);
-            }
-            animateGlitchCircle();
-            
-          break;
-          case "MatrixShape":
-            MatrixShape.prepare(scene, camera);
-            const animateMatrixShape = () => {
-              analyserRef.current.getByteFrequencyData(dataArray);
-              MatrixShape.animate(dataArray, composer);
-              requestAnimationFrame(animateMatrixShape);
-            }
-            animateMatrixShape();
-            break;
-        case "FlowingParticles":
-          FlowingParticles.prepare(scene, settings, renderer);
-          const animateFlowingParticles = () => {
+          const glitchPass = new GlitchPass();
+          composer.addPass(glitchPass);
+          const particleSystem = GlitchCircle.prepare(settings, gui, glitchPass, setSettings);
+          scene.add(particleSystem);
+          camera.position.z = 30;
+          const animateGlitchCircle = () => {
             analyserRef.current.getByteFrequencyData(dataArray);
-            FlowingParticles.animate();
-            requestAnimationFrame(animateFlowingParticles);
-          }
-          animateFlowingParticles();
+            GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
+            requestAnimationFrame(animateGlitchCircle);
+          };
+          animateGlitchCircle();
           break;
-         
+        case "MatrixShape":
+          MatrixShape.prepare(scene, camera);
+          const animateMatrixShape = () => {
+            analyserRef.current.getByteFrequencyData(dataArray);
+            MatrixShape.animate(dataArray, composer);
+            requestAnimationFrame(animateMatrixShape);
+          };
+          animateMatrixShape();
+          break;
       }
-      
+
       guiContainerRef.current.appendChild(gui.domElement);
 
       // Cleanup on component unmount
@@ -112,14 +96,30 @@ export default function UploadAudio() {
     }
   }, [analyser]);
 
-
-
   const handleFileChange = (e) => {
-    setAudioFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      setAudioFile(file);
+      handleUpload(file); // Directly calling upload on file selection
+    }
   };
 
-  const handleUpload = () => {
-    if (!audioFile) return;
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setAudioFile(e.dataTransfer.files[0]);
+      handleUpload(e.dataTransfer.files[0]); // Directly calling upload on file drop
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleUpload = (file) => {
+    if (!file) return;
 
     setIsUploading(true);
 
@@ -127,7 +127,7 @@ export default function UploadAudio() {
     setAudioContext(audioCtx);
 
     const reader = new FileReader();
-    reader.readAsArrayBuffer(audioFile);
+    reader.readAsArrayBuffer(file);
 
     reader.onload = (event) => {
       audioCtx.decodeAudioData(event.target.result, (buffer) => {
@@ -144,7 +144,6 @@ export default function UploadAudio() {
         analyserRef.current = analyserNode;
         setDataArray(dataArray);
         setAnalyser(analyserNode);
-
 
         source.start(0);
         audioRef.current = source;
@@ -215,51 +214,48 @@ export default function UploadAudio() {
         </div>
         <Row className="g-3">
           <Col xl="12">
-            <Card className="card-one">
+            <Card className="card-one"> 
               <Card.Body className="p-4">
-                <Row className="g-3">
-                  <Col xl="9">
-                    <Form.Group controlId="formFile" className="mb-3">
-                      <Form.Label>Choose an audio file to upload</Form.Label>
-                      <Form.Control type="file" accept="audio/*" onChange={handleFileChange} />
-                    </Form.Group>
-                    {audioFile && (
-                      <div>
-                        <p>File selected: {audioFile.name}</p>
-                        <Button variant="primary" onClick={handleUpload} disabled={isUploading}>
-                          {isUploading ? "Uploading..." : "Upload"}
-                        </Button>
-                      </div>
-                    )}
-                    {isUploading && (
-                      <div className="mt-3">
-                        <ProgressBar now={progress} label={`${progress}%`} />
-                      </div>
-                    )}
-                  </Col>
-                  <Col xl="" className="mt-4 mt-xl-0">
-                    <h5>Instructions</h5>
-                    <p>
-                      1. Select an audio file from your device.
-                      <br />
-                      2. Click the upload button to start the process.
-                      <br />
-                      3. Wait for the upload to complete.
-                      <br />
-                      4. Use the controls to customize the visualization.
-                      <br />
-                      5. Click the download button to save the visualization as a video.
-                    </p>
-                  </Col>
-                </Row>
-                <hr />
+               <Row className="g-3">
+  <Col xl="9">
+    <Form.Group controlId="formFile" className="mb-3">
+      <Form.Label></Form.Label>
+      <div
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center', cursor: 'pointer' }}
+      > 
+        <Form.Control 
+          type="file" 
+          accept="audio/*" 
+          onChange={handleFileChange} 
+        />
+      </div>
+    </Form.Group>
+    {isUploading &&(
+      <div className="mt-3">
+        <ProgressBar now={progress} label={`${progress}%`} />
+      </div>
+    )}
+  </Col>
+  <Col xl="" className="mt-4 mt-xl-0">
+    <h5>Instructions</h5>
+    <p>
+      1. Choose an audio file to upload or drag it.
+      <br />
+      2. Wait for the upload to complete.
+      <br />
+      3. Use the controls to customize the visualization.
+    </p>
+  </Col>
+</Row>
+             <hr />
                 <Row className="g-3 mt-4">
                   <Col xl="9">
-                    <h5>Canvas</h5>
                     <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: 'auto', backgroundColor: '#000' }} />
                   </Col>
                   <Col xl="3">
-                    <h5>Controls</h5>
+                    <h5>Controller</h5>
                     <div ref={guiContainerRef}></div>
                     <Button variant="primary" onClick={handleDownload} className="mt-2">Download Video</Button>
                   </Col>

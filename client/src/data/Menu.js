@@ -8,12 +8,12 @@ const dashboardMenu = [
   {
     "label": "Animation Studio",
     "link": "/dashboard/studio",
-    "icon": "ri-calendar-todo-line"
+    "icon": "ri-disc-line"
   },
   {
     "label": "Interactive Audio",
     "link": "/dashboard/sales",
-    "icon": "ri-shopping-bag-3-line"
+    "icon": "ri-pulse-fill"
   },
   {
     "label": "Website Analytics",
