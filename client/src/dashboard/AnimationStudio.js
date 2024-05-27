@@ -32,14 +32,13 @@ export default function UploadAudio() {
   const [audioDuration, setAudioDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
+  const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig.defaultAnimationName].name);
   const canvasRef = useRef();
   const guiContainerRef = useRef();
   const analyserRef = useRef();
   const sourceRef = useRef();
   const recorderRef = useRef();
   const chunksRef = useRef([]);
-
-  const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig["defaultAnimationName"]]);
 
   useEffect(() => {
     if (canvasRef.current && analyser) {
@@ -75,7 +74,7 @@ export default function UploadAudio() {
 
       guiContainerRef.current.appendChild(gui.domElement);
 
-      switch (selectedAnimation.name) {
+      switch (selectedAnimation) {
         case "GlitchCircle":
           const glitchPass = new GlitchPass();
           composer.addPass(glitchPass);
@@ -102,6 +101,8 @@ export default function UploadAudio() {
           };
           animateMatrixShape();
           break;
+        default:
+          console.error(`Unknown animation: ${selectedAnimation}`);
       }
 
       return () => {
@@ -252,6 +253,11 @@ export default function UploadAudio() {
     }
   };
 
+  const handleAnimationChange = (event) => {
+    const newAnimation = event.target.value;
+    setSelectedAnimation(newAnimation);
+  };
+
   const updateVisualization = () => {
     // Placeholder: Implement visualization update logic here
   };
@@ -306,12 +312,24 @@ export default function UploadAudio() {
                   <Col xl="3" className="mt-4 mt-xl-0">
                     <h5>Instructions</h5>
                     <p>
-                      1. Choose an audio file to upload or drag it.
+                      1. Choose an audio file to upload or drag.
                       <br />
-                      2. Wait for the upload to complete.
+                      2. Select animation type.
                       <br />
                       3. Use the controls to customize the visualization.
                     </p>
+                    <Form.Group>
+                      <Form.Label><li className="breadcrumb-item"><Link>Animation Type</Link></li></Form.Label>
+                      <Form.Control as="select" value={selectedAnimation} onChange={handleAnimationChange}>
+                        {Object.keys(animationConfig)
+                          .filter(key => key !== "defaultAnimationName")
+                          .map((key) => (
+                            <option key={key} value={animationConfig[key].name}>
+                              {animationConfig[key].name}
+                            </option>
+                          ))}
+                      </Form.Control>
+                    </Form.Group>
                   </Col>
                 </Row>
                 <hr />
@@ -339,7 +357,7 @@ export default function UploadAudio() {
                           Stop Recording
                         </Button>
                       </div>
-                      <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px',  padding: '10px', borderRadius: '5px' }}></div>
+                      <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', borderRadius: '5px' }}></div>
                     </div>
                   </Col>
                 </Row>
