@@ -28,39 +28,52 @@ export default function UploadAudio() {
     radius: 10,
     glitch: false,
   });
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isRecording, setIsRecording] = useState(false);
   const canvasRef = useRef();
-  const audioRef = useRef();
   const guiContainerRef = useRef();
   const analyserRef = useRef();
+  const sourceRef = useRef();
+  const recorderRef = useRef();
+  const chunksRef = useRef([]);
 
   const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig["defaultAnimationName"]]);
 
   useEffect(() => {
-    if (canvasRef.current && audioRef.current && analyser) {
-      // Setup scene
+    if (canvasRef.current && analyser) {
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, canvasRef.current.clientWidth / canvasRef.current.clientHeight, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, antialias: true });
       renderer.setSize(canvasRef.current.clientWidth, canvasRef.current.clientHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
 
-      // Orbit controls for better interaction
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      // Lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
       const pointLight = new THREE.PointLight(0xffffff, 1);
       pointLight.position.set(50, 50, 50);
       scene.add(pointLight);
 
-      // Post-processing
       const composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
 
       const gui = new GUI({ autoPlace: false });
-      // Create particles
+      const particlesFolder = gui.addFolder('Particle Settings');
+      particlesFolder.add(settings, 'particleColor', '#ffffff', '#000000').name('Color').onChange(updateVisualization);
+      particlesFolder.add(settings, 'particleSize', 0.1, 5.0).name('Size').onChange(updateVisualization);
+      particlesFolder.add(settings, 'particleCount', 100, 1000).step(1).name('Count').onChange(updateVisualization);
+      particlesFolder.add(settings, 'radius', 1, 20).name('Radius').onChange(updateVisualization);
+      particlesFolder.open();
+
+      const effectsFolder = gui.addFolder('Effects');
+      effectsFolder.add(settings, 'glitch').name('Glitch Effect').onChange(toggleGlitchEffect);
+      effectsFolder.open();
+
+      guiContainerRef.current.appendChild(gui.domElement);
 
       switch (selectedAnimation.name) {
         case "GlitchCircle":
@@ -70,8 +83,10 @@ export default function UploadAudio() {
           scene.add(particleSystem);
           camera.position.z = 30;
           const animateGlitchCircle = () => {
-            analyserRef.current.getByteFrequencyData(dataArray);
-            GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
+            if (analyserRef.current) {
+              analyserRef.current.getByteFrequencyData(dataArray);
+              GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
+            }
             requestAnimationFrame(animateGlitchCircle);
           };
           animateGlitchCircle();
@@ -79,28 +94,29 @@ export default function UploadAudio() {
         case "MatrixShape":
           MatrixShape.prepare(scene, camera);
           const animateMatrixShape = () => {
-            analyserRef.current.getByteFrequencyData(dataArray);
-            MatrixShape.animate(dataArray, composer);
+            if (analyserRef.current) {
+              analyserRef.current.getByteFrequencyData(dataArray);
+              MatrixShape.animate(dataArray, composer);
+            }
             requestAnimationFrame(animateMatrixShape);
           };
           animateMatrixShape();
           break;
       }
 
-      guiContainerRef.current.appendChild(gui.domElement);
-
-      // Cleanup on component unmount
       return () => {
         gui.destroy();
+        renderer.dispose();
+        scene.dispose();
       };
     }
-  }, [analyser]);
+  }, [analyser, settings, selectedAnimation]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setAudioFile(file);
-      handleUpload(file); // Directly calling upload on file selection
+      handleUpload(file);
     }
   };
 
@@ -109,7 +125,7 @@ export default function UploadAudio() {
     e.stopPropagation();
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       setAudioFile(e.dataTransfer.files[0]);
-      handleUpload(e.dataTransfer.files[0]); // Directly calling upload on file drop
+      handleUpload(e.dataTransfer.files[0]);
     }
   };
 
@@ -118,10 +134,24 @@ export default function UploadAudio() {
     e.stopPropagation();
   };
 
+  const simulateProgress = () => {
+    const interval = setInterval(() => {
+      setProgress(prevProgress => {
+        if (prevProgress >= 100) {
+          clearInterval(interval);
+          setIsUploading(false);
+          return 100;
+        }
+        return prevProgress + 10;
+      });
+    }, 100);
+  };
+
   const handleUpload = (file) => {
     if (!file) return;
 
     setIsUploading(true);
+    setProgress(0);
 
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     setAudioContext(audioCtx);
@@ -145,21 +175,61 @@ export default function UploadAudio() {
         setDataArray(dataArray);
         setAnalyser(analyserNode);
 
-        source.start(0);
-        audioRef.current = source;
-        setIsUploading(false);
+        setAudioDuration(buffer.duration);
+        sourceRef.current = source;
+
+        simulateProgress();
       });
     };
   };
 
-  const handleDownload = () => {
+  const handlePlayPause = () => {
+    if (audioContext && sourceRef.current) {
+      if (isPlaying) {
+        sourceRef.current.stop();
+        setIsPlaying(false);
+      } else {
+        const newSource = audioContext.createBufferSource();
+        newSource.buffer = sourceRef.current.buffer;
+        newSource.connect(analyserRef.current);
+        analyserRef.current.connect(audioContext.destination);
+        newSource.start(0, currentTime);
+        sourceRef.current = newSource;
+        setIsPlaying(true);
+
+        const updateCurrentTime = () => {
+          setCurrentTime(audioContext.currentTime);
+          if (isPlaying) {
+            requestAnimationFrame(updateCurrentTime);
+          }
+        };
+        updateCurrentTime();
+      }
+    }
+  };
+
+  const handleSeek = (event) => {
+    const newTime = (event.target.value / 100) * audioDuration;
+    setCurrentTime(newTime);
+    if (isPlaying && audioContext) {
+      sourceRef.current.stop();
+      const newSource = audioContext.createBufferSource();
+      newSource.buffer = sourceRef.current.buffer;
+      newSource.connect(analyserRef.current);
+      analyserRef.current.connect(audioContext.destination);
+      newSource.start(0, newTime);
+      sourceRef.current = newSource;
+    }
+  };
+
+  const handleStartRecording = () => {
     const stream = canvasRef.current.captureStream(25);
     const recorder = new MediaRecorder(stream);
-    const chunks = [];
+    chunksRef.current = [];
 
-    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.ondataavailable = e => chunksRef.current.push(e.data);
     recorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
+      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
@@ -171,37 +241,28 @@ export default function UploadAudio() {
     };
 
     recorder.start();
-    setTimeout(() => recorder.stop(), 10000); // Record for 10 seconds
+    recorderRef.current = recorder;
+    setIsRecording(true);
   };
 
-  const currentSkin = localStorage.getItem("skin-mode") ? "dark" : "";
-  const [skin, setSkin] = useState(currentSkin);
-
-  const switchSkin = (skin) => {
-    if (skin === "dark") {
-      const btnWhite = document.getElementsByClassName("btn-white");
-
-      for (const btn of btnWhite) {
-        btn.classList.add("btn-outline-primary");
-        btn.classList.remove("btn-white");
-      }
-    } else {
-      const btnOutlinePrimary = document.getElementsByClassName("btn-outline-primary");
-
-      for (const btn of btnOutlinePrimary) {
-        btn.classList.remove("btn-outline-primary");
-        btn.classList.add("btn-white");
-      }
+  const handleStopRecording = () => {
+    if (recorderRef.current && recorderRef.current.state === 'recording') {
+      recorderRef.current.stop();
+      setIsRecording(false);
     }
   };
 
-  useEffect(() => {
-    switchSkin(skin);
-  }, [skin]);
+  const updateVisualization = () => {
+    // Placeholder: Implement visualization update logic here
+  };
+
+  const toggleGlitchEffect = (value) => {
+    // Placeholder: Implement glitch effect toggle logic here
+  };
 
   return (
     <React.Fragment>
-      <Header onSkin={setSkin} />
+      <Header />
       <div className="main main-app p-3 p-lg-4">
         <div className="d-md-flex align-items-center justify-content-between mb-4">
           <div>
@@ -214,55 +275,79 @@ export default function UploadAudio() {
         </div>
         <Row className="g-3">
           <Col xl="12">
-            <Card className="card-one"> 
+            <Card className="card-one">
               <Card.Body className="p-4">
-               <Row className="g-3">
-  <Col xl="9">
-    <Form.Group controlId="formFile" className="mb-3">
-      <Form.Label></Form.Label>
-      <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center', cursor: 'pointer' }}
-      > 
-        <Form.Control 
-          type="file" 
-          accept="audio/*" 
-          onChange={handleFileChange} 
-        />
-      </div>
-    </Form.Group>
-    {isUploading &&(
-      <div className="mt-3">
-        <ProgressBar now={progress} label={`${progress}%`} />
-      </div>
-    )}
-  </Col>
-  <Col xl="" className="mt-4 mt-xl-0">
-    <h5>Instructions</h5>
-    <p>
-      1. Choose an audio file to upload or drag it.
-      <br />
-      2. Wait for the upload to complete.
-      <br />
-      3. Use the controls to customize the visualization.
-    </p>
-  </Col>
-</Row>
-             <hr />
-                <Row className="g-3 mt-4">
+                <Row className="g-3">
                   <Col xl="9">
-                    <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: 'auto', backgroundColor: '#000' }} />
+                    <Form.Group controlId="formFile" className="mb-3">
+                      <Form.Label></Form.Label>
+                      <div
+                        onDrop={handleDrop}
+                        onDragOver={handleDragOver}
+                        style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center', cursor: 'pointer' }}
+                      >
+                        <Form.Control
+                          type="file"
+                          accept="audio/*"
+                          onChange={handleFileChange}
+                        />
+                      </div>
+                    </Form.Group>
+                    {isUploading && (
+                      <div className="mt-3">
+                        <ProgressBar
+                          now={progress}
+                          label={`${progress}%`}
+                          variant="info"
+                        />
+                      </div>
+                    )}
                   </Col>
-                  <Col xl="3">
-                    <h5>Controller</h5>
-                    <div ref={guiContainerRef}></div>
-                    <Button variant="primary" onClick={handleDownload} className="mt-2">Download Video</Button>
+                  <Col xl="3" className="mt-4 mt-xl-0">
+                    <h5>Instructions</h5>
+                    <p>
+                      1. Choose an audio file to upload or drag it.
+                      <br />
+                      2. Wait for the upload to complete.
+                      <br />
+                      3. Use the controls to customize the visualization.
+                    </p>
                   </Col>
                 </Row>
+                <hr />
+                <Row className="g-4 mt-3">
+                  <Col xl="12">
+                    <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
+                      <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
+                      <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
+                        <Button variant="primary" onClick={handlePlayPause} className="me-2">
+                          {isPlaying ? 'Pause' : 'Play'}
+                        </Button>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={(currentTime / audioDuration) * 100}
+                          onChange={handleSeek}
+                          className="mx-3"
+                          style={{ width: '200px' }}
+                        />
+                        <Button variant="primary" onClick={handleStartRecording} className="ms-2" disabled={isRecording}>
+                          Start Recording
+                        </Button>
+                        <Button variant="danger" onClick={handleStopRecording} className="ms-2" disabled={!isRecording}>
+                          Stop Recording
+                        </Button>
+                      </div>
+                      <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px',  padding: '10px', borderRadius: '5px' }}></div>
+                    </div>
+                  </Col>
+                </Row>
+                
               </Card.Body>
             </Card>
           </Col>
+          
         </Row>
         <Row className="g-3 mt-4">
           <Col xl="12">
