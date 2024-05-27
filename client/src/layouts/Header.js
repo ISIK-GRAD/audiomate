@@ -1,13 +1,22 @@
-// src/layouts/Header.js
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Dropdown from 'react-bootstrap/Dropdown';
 import userAvatar from "../assets/img/img1.jpg";
 import notification from "../data/Notification";
 import { UserContext } from '../context/UserContext'; // Import UserContext
 
-export default function Header({ onSkin }) {
+export default function Header() {
   const { user } = useContext(UserContext); // Get user from context
+
+  const [theme, setTheme] = useState(localStorage.getItem('skin-mode') || 'light');
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.querySelector('html').setAttribute('data-skin', 'dark');
+    } else {
+      document.querySelector('html').removeAttribute('data-skin');
+    }
+  }, [theme]);
 
   const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     <Link
@@ -35,7 +44,7 @@ export default function Header({ onSkin }) {
         document.body.classList.toggle("sidebar-hide");
       }
     }
-  }
+  };
 
   function NotificationList() {
     const notiList = notification.map((item, key) => {
@@ -47,7 +56,7 @@ export default function Header({ onSkin }) {
             <span>{item.date}</span>
           </div>
         </li>
-      )
+      );
     });
 
     return (
@@ -57,33 +66,17 @@ export default function Header({ onSkin }) {
     );
   }
 
-  const skinMode = (e) => {
-    e.preventDefault();
-    e.target.classList.add("active");
+  const skinMode = (newTheme) => {
+    const theme = newTheme.toLowerCase();
+    setTheme(theme);
 
-    let node = e.target.parentNode.firstChild;
-    while (node) {
-      if (node !== e.target && node.nodeType === Node.ELEMENT_NODE)
-        node.classList.remove("active");
-      node = node.nextElementSibling || node.nextSibling;
-    }
-
-    let skin = e.target.textContent.toLowerCase();
-    let HTMLTag = document.querySelector("html");
-
-    if (skin === "dark") {
-      HTMLTag.setAttribute("data-skin", skin);
-      localStorage.setItem('skin-mode', skin);
-
-      onSkin(skin);
-
+    if (theme === 'dark') {
+      document.querySelector('html').setAttribute('data-skin', 'dark');
+      localStorage.setItem('skin-mode', 'dark');
     } else {
-      HTMLTag.removeAttribute("data-skin");
+      document.querySelector('html').removeAttribute('data-skin');
       localStorage.removeItem('skin-mode');
-
-      onSkin('');
     }
-
   };
 
   const sidebarSkin = (e) => {
@@ -106,7 +99,7 @@ export default function Header({ onSkin }) {
       HTMLTag.setAttribute("data-sidebar", skin);
       localStorage.setItem("sidebar-skin", skin);
     } else {
-      localStorage.removeItem("sidebar-skin", skin);
+      localStorage.removeItem("sidebar-skin");
     }
   };
 
@@ -120,22 +113,16 @@ export default function Header({ onSkin }) {
       </div>
 
       <Dropdown className="dropdown-skin" align="end">
-        <Dropdown.Toggle as={CustomToggle}>
-          <i className="ri-settings-3-line"></i>
+        <Dropdown.Toggle as={CustomToggle} onClick={() => skinMode(theme === 'light' ? 'dark' : 'light')}>
+          {theme === 'light' ? <i className="ri-sun-line"></i> : <i className="ri-moon-fill"></i>}
         </Dropdown.Toggle>
         <Dropdown.Menu className="mt-10-f">
           <label>Skin Mode</label>
           <nav className="nav nav-skin">
-            <Link onClick={skinMode} className={localStorage.getItem("skin-mode") ? "nav-link" : "nav-link active"}>Light</Link>
-            <Link onClick={skinMode} className={localStorage.getItem("skin-mode") ? "nav-link active" : "nav-link"}>Dark</Link>
+            <Link onClick={() => skinMode('light')} className={theme === 'light' ? "nav-link active" : "nav-link"}>Light</Link>
+            <Link onClick={() => skinMode('dark')} className={theme === 'dark' ? "nav-link active" : "nav-link"}>Dark</Link>
           </nav>
           <hr />
-          <label>Sidebar Skin</label>
-          <nav id="sidebarSkin" className="nav nav-skin">
-            <Link onClick={sidebarSkin} className={!(localStorage.getItem("sidebar-skin")) ? "nav-link active" : "nav-link"}>Default</Link>
-            <Link onClick={sidebarSkin} className={(localStorage.getItem("sidebar-skin") === "prime") ? "nav-link active" : "nav-link"}>Prime</Link>
-            <Link onClick={sidebarSkin} className={(localStorage.getItem("sidebar-skin") === "dark") ? "nav-link active" : "nav-link"}>Dark</Link>
-          </nav>
         </Dropdown.Menu>
       </Dropdown>
 

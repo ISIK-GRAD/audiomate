@@ -310,8 +310,8 @@ export default function UploadAudio() {
                     )}
                   </Col>
                   <Col xl="3" className="mt-4 mt-xl-0">
-                    <h5>Instructions</h5>
-                    <p>
+                  <h6 className="text-dark fw-semibold mb-1">Instructions</h6>
+                    <p className="text-secondary mb-3">
                       1. Choose an audio file to upload or drag.
                       <br />
                       2. Select animation type.
