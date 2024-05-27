@@ -309,17 +309,9 @@ export default function UploadAudio() {
                       </div>
                     )}
                   </Col>
-                  <Col xl="3" className="mt-4 mt-xl-0">
-                  <h6 className="text-dark fw-semibold mb-1">Instructions</h6>
-                    <p className="text-secondary mb-3">
-                      1. Choose an audio file to upload or drag.
-                      <br />
-                      2. Select animation type.
-                      <br />
-                      3. Use the controls to customize the visualization.
-                    </p>
+                  <Col xl="3" className="mt-5 mt-xl-9">
+                  <span className="badge bg-ui-02 fs-xs"> Animation Type</span>
                     <Form.Group>
-                      <Form.Label><li className="breadcrumb-item"><Link>Animation Type</Link></li></Form.Label>
                       <Form.Control as="select" value={selectedAnimation} onChange={handleAnimationChange}>
                         {Object.keys(animationConfig)
                           .filter(key => key !== "defaultAnimationName")
