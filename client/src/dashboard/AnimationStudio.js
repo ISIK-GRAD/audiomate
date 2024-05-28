@@ -278,9 +278,9 @@ export default function UploadAudio() {
           <Col xl="12">
             <Card className="card-one">
               <Card.Body className="p-4">
-                <Row className="g-3">
+                <Row className="g-3" >
                   <Col xl="6">
-                    <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Group controlId="formFile" className="mb-3" >
                       <Form.Label></Form.Label>
                       <div
                         onDrop={handleDrop}
@@ -291,6 +291,8 @@ export default function UploadAudio() {
                           type="file"
                           accept="audio/*"
                           onChange={handleFileChange}
+                          
+                          style={{color: 'rgba(40, 135, 255, 1)'}}
                         />
                       </div>
                     </Form.Group>
@@ -306,11 +308,11 @@ export default function UploadAudio() {
                   </Col>
                   <Col xl="3" className="mt-xl-9 d-flex justify-content-center align-items-center">
                     <div className="w-100 d-flex justify-content-center align-items-start flex-column">
-                      <span className="badge bg-ui-02 fs-xs"> 
+                      <span className="badge bg-ui-02 fs-xs"  style={{ color: 'black'}}> 
                         Animation Type
                       </span>
                       <Form.Group className="w-100">
-                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange}>
+                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange} style={{ color: 'rgba(40, 135, 255, 1)'}} >
                           {Object.keys(animationConfig)
                             .filter(key => key !== "defaultAnimationName")
                             .map((key) => (
@@ -324,14 +326,14 @@ export default function UploadAudio() {
                   </Col>
                   <Col xl="3" className="d-flex flex-row-reverse">
                     <h4 className="mb-0 w-100 d-flex justify-content-center align-items-center">
-                        <span>
+                        <span className="text-dark fw-semibold mb-1">
                           Instructions
                         </span>
-                        <i style={{"margin-left": "1rem"}} className="tooltip-icon ri-question-mark" data-tooltip="
+                        
+                        <i  style={{"margin-left": "1rem",color: 'rgba(40, 135, 255, 1)'}} className="tooltip-icon ri-question-mark" data-tooltip="
                         • Select and upload or drag an audio file to the file input field&#10;•
                         Use the controls to customize the animation&#10;•
-                        Download a video recording of the animation or save it in your account">
-                          
+                        Download a video recording of the animation or save it in your account">   
                       </i>
                     </h4>
                    
@@ -339,36 +341,38 @@ export default function UploadAudio() {
                 </Row>
                 <hr />
                 <Row className="g-4 mt-3">
-                  <Col xl="12">
-                    <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
-                      <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
-                      <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
-                        <Button onClick={handlePlayPause} className="audio-button me-2">
-                          {isPlaying ?
-                             <i class="ri-pause-circle-line"></i> :
-                             <i class="ri-play-line"></i> 
-                          }
-                        </Button>
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={(currentTime / audioDuration) * 100}
-                          onChange={handleSeek}
-                          className="mx-3"
-                          style={{ width: '200px' }}
-                        />
-                        <Button onClick={handleStartRecording} className="audio-button ms-2" disabled={isRecording}>
-                          <i class="ri-record-circle-line"></i>
-                        </Button>
-                        <Button onClick={handleStopRecording} className="audio-button ms-2" disabled={!isRecording}>
-                          <i class="ri-stop-mini-line"></i>
-                        </Button>
-                      </div>
-                      <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', borderRadius: '5px' }}></div>
-                    </div>
-                  </Col>
-                </Row>
+  <Col xl="12">
+    <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
+      <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
+      <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '5px', borderRadius: '5px' }}>
+        <Button onClick={handlePlayPause} className="audio-button me-2" style={{ padding: '0', minWidth: '40px', minHeight: '40px' }}>
+          {isPlaying ?
+            <i className="ri-pause-circle-line" style={{ fontSize: '24px' }}></i> :
+            <i className="ri-play-line" style={{ fontSize: '24px' }}></i> 
+          }
+        </Button>
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={(currentTime / audioDuration) * 100}
+          onChange={handleSeek}
+          className="mx-3"
+          style={{ width: '200px' }}
+        />
+        <Button onClick={handleStartRecording} className="audio-button ms-2" style={{ padding: '0', minWidth: '40px', minHeight: '40px' }}>
+          <i className="ri-record-circle-line" style={{ fontSize: '24px' }}></i>
+        </Button>
+        <Button onClick={handleStopRecording} className="audio-button ms-2" style={{ padding: '0', minWidth: '40px', minHeight: '40px' }}>
+          <i className="ri-stop-mini-line" style={{ fontSize: '24px' }}></i>
+        </Button>
+      </div>
+      <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', borderRadius: '5px' }}></div>
+    </div>
+  </Col>
+</Row>
+
+
                 
               </Card.Body>
             </Card>
