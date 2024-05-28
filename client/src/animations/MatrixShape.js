@@ -28,21 +28,32 @@ const prepare = (scene, camera) => {
     plane2.position.set(0, -30, 0);
     group.add(plane2);
 
-    const icosahedronGeometry = new THREE.IcosahedronGeometry(10, 4);
-    const lambertMaterial = new THREE.MeshLambertMaterial({
+    const bigBallGeometry = new THREE.IcosahedronGeometry(10, 4);
+    const bigBallMaterial = new THREE.MeshLambertMaterial({
         color: 0xff00ee,
         wireframe: true
     });
 
-    const ball = new THREE.Mesh(icosahedronGeometry, lambertMaterial);
-    ball.position.set(0, 0, 0);
-    group.add(ball);
+    const smallBallGeometry = new THREE.IcosahedronGeometry(4, 3);
+    const smallBallMaterial = new THREE.MeshLambertMaterial({
+        color: 0x34ebd2,
+        wireframe: true
+    });
+
+    const bigBall = new THREE.Mesh(bigBallGeometry, bigBallMaterial);
+    bigBall.position.set(0, 0, 0);
+    group.add(bigBall);
+
+    
+    const smallBall = new THREE.Mesh(smallBallGeometry, smallBallMaterial);
+    smallBall.position.set(0, 0, 0);
+    group.add(smallBall);
 
 
     var spotLight = new THREE.SpotLight(0xffffff);
     spotLight.intensity = 0.9;
     spotLight.position.set(-10, 40, 20);
-    spotLight.lookAt(ball);
+    spotLight.lookAt(bigBall);
     spotLight.castShadow = true;
     scene.add(spotLight);
 
@@ -56,18 +67,27 @@ const animate = (dataArray, composer) => {
     var upperHalfArray = dataArray.slice((dataArray.length/2) - 1, dataArray.length - 1);
 
     var lowerMax = max(lowerHalfArray);
+    var lowerMin = min(lowerHalfArray);
     var lowerAvg = avg(lowerHalfArray);
     var upperAvg = avg(upperHalfArray);
+    var upperMax = avg(upperHalfArray);
+    var upperMin = min(upperHalfArray);
+
 
     var lowerMaxFr = lowerMax / lowerHalfArray.length;
+    var lowerMinFr = lowerMin / lowerHalfArray.length;
+    var lowerAvgFr = lowerAvg / lowerHalfArray.length;
     var upperAvgFr = upperAvg / upperHalfArray.length;
+    var upperMaxFr = upperMax / upperHalfArray.length;
+    var upperMinFr = upperMin / upperHalfArray.length;
 
-    console.log("group", group);
 
-    makeRoughGround(group.children[0], modulate(upperAvgFr, 0, 1, 0.5, 4));
-    makeRoughGround(group.children[1], modulate(lowerMaxFr, 0, 1, 0.5, 4));
+    makeRoughGround(group.children[0], modulate(lowerAvgFr, 0, 1, 0.25, 3));
+    makeRoughGround(group.children[1], modulate(lowerMaxFr, 0, 1, 0.2, 6));
     
-    makeRoughBall(group.children[2], modulate(Math.pow(lowerMaxFr, 0.8), 0, 1, 0, 8), modulate(upperAvgFr, 0, 1, 0, 4));
+    makeRoughBall(group.children[2], modulate(Math.pow(upperAvg, 0.4), 0, 1, 0, 8), modulate(upperMaxFr, 0, 1, 0, 4));
+    makeRoughBall(group.children[3], modulate(Math.pow(lowerAvg, 0.4), 0, 1, 0, 4), modulate(upperAvgFr, 0, 1, 0, 8));
+
 
     group.rotation.y += 0.005;
     composer.render();
@@ -119,6 +139,10 @@ function avg(arr){
 
 function max(arr){
     return arr.reduce(function(a, b){ return Math.max(a, b); })
+}
+
+function min(arr){
+    return arr.reduce(function(a, b){ return Math.min(a, b); })
 }
 
 export { prepare, animate };

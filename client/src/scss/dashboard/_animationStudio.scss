@@ -1,0 +1,35 @@
+.tooltip-icon {
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    border: 1px solid #d3d3d3;
+    border-radius: 50%;
+    padding: 0.2rem;
+  }
+  
+.tooltip-icon::after {
+    content: attr(data-tooltip);
+    font-family: 'Archivo', sans-serif;
+    font-size: 1em;
+    margin-top: 1rem;
+    position: absolute;
+    white-space: pre;
+    visibility: hidden;
+    background-color: black;
+    color: white;
+    text-align: left;
+    border-radius: 5px;
+    padding: 5px 10px;
+    bottom: 50%;
+    left: 50%;
+    transform: translate(-85%, -5%);
+    z-index: 1;
+}
+
+.tooltip-icon:hover::after {
+    visibility: visible;
+}
+
+.audio-button{
+    background-color: rgb(50,50,50);
+}

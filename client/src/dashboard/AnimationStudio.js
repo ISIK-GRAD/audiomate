@@ -9,6 +9,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import "../scss/dashboard/_animationStudio.scss";
 
 const animationConfig = require("../config/AnimationConfig.json");
 const GlitchCircle = require("../animations/GlitchCircle");
@@ -271,20 +272,14 @@ export default function UploadAudio() {
       <Header />
       <div className="main main-app p-3 p-lg-4">
         <div className="d-md-flex align-items-center justify-content-between mb-4">
-          <div>
-            <ol className="breadcrumb fs-sm mb-1">
-              <li className="breadcrumb-item"><Link to="#">Dashboard</Link></li>
-              <li className="breadcrumb-item active" aria-current="page">Animation Studio</li>
-            </ol>
-            <h4 className="main-title mb-0">Welcome to Animation Studio</h4>
-          </div>
+            <h4 className="main-title mb-0">Animation Studio</h4>
         </div>
         <Row className="g-3">
           <Col xl="12">
             <Card className="card-one">
               <Card.Body className="p-4">
                 <Row className="g-3">
-                  <Col xl="9">
+                  <Col xl="6">
                     <Form.Group controlId="formFile" className="mb-3">
                       <Form.Label></Form.Label>
                       <div
@@ -309,20 +304,38 @@ export default function UploadAudio() {
                       </div>
                     )}
                   </Col>
-                  <Col xl="3" className="mt-5 mt-xl-9">
-                  <span className="badge bg-ui-02 fs-xs"> Animation Type</span>
-                    <Form.Group>
-                      <Form.Control as="select" value={selectedAnimation} onChange={handleAnimationChange}>
-                        {Object.keys(animationConfig)
-                          .filter(key => key !== "defaultAnimationName")
-                          .map((key) => (
-                            <option key={key} value={animationConfig[key].name}>
-                              {animationConfig[key].name}
-                            </option>
-                          ))}
-                      </Form.Control>
-                    </Form.Group>
+                  <Col xl="3" className="mt-xl-9 d-flex justify-content-center align-items-center">
+                    <div className="w-100 d-flex justify-content-center align-items-start flex-column">
+                      <span className="badge bg-ui-02 fs-xs"> 
+                        Animation Type
+                      </span>
+                      <Form.Group className="w-100">
+                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange}>
+                          {Object.keys(animationConfig)
+                            .filter(key => key !== "defaultAnimationName")
+                            .map((key) => (
+                              <option key={key} value={animationConfig[key].name}>
+                                {animationConfig[key].name}
+                              </option>
+                            ))}
+                        </Form.Control>
+                      </Form.Group>
+                    </div>
                   </Col>
+                  <Col xl="3" className="d-flex flex-row-reverse">
+                    <h4 className="mb-0 w-100 d-flex justify-content-center align-items-center">
+                        <span>
+                          Instructions
+                        </span>
+                        <i style={{"margin-left": "1rem"}} className="tooltip-icon ri-question-mark" data-tooltip="
+                        • Select and upload or drag an audio file to the file input field&#10;•
+                        Use the controls to customize the animation&#10;•
+                        Download a video recording of the animation or save it in your account">
+                          
+                      </i>
+                    </h4>
+                   
+                </Col>
                 </Row>
                 <hr />
                 <Row className="g-4 mt-3">
@@ -330,8 +343,11 @@ export default function UploadAudio() {
                     <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
                       <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
                       <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
-                        <Button variant="primary" onClick={handlePlayPause} className="me-2">
-                          {isPlaying ? 'Pause' : 'Play'}
+                        <Button onClick={handlePlayPause} className="audio-button me-2">
+                          {isPlaying ?
+                             <i class="ri-pause-circle-line"></i> :
+                             <i class="ri-play-line"></i> 
+                          }
                         </Button>
                         <input
                           type="range"
@@ -342,11 +358,11 @@ export default function UploadAudio() {
                           className="mx-3"
                           style={{ width: '200px' }}
                         />
-                        <Button variant="primary" onClick={handleStartRecording} className="ms-2" disabled={isRecording}>
-                          Start Recording
+                        <Button onClick={handleStartRecording} className="audio-button ms-2" disabled={isRecording}>
+                          <i class="ri-record-circle-line"></i>
                         </Button>
-                        <Button variant="danger" onClick={handleStopRecording} className="ms-2" disabled={!isRecording}>
-                          Stop Recording
+                        <Button onClick={handleStopRecording} className="audio-button ms-2" disabled={!isRecording}>
+                          <i class="ri-stop-mini-line"></i>
                         </Button>
                       </div>
                       <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', borderRadius: '5px' }}></div>
