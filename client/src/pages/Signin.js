@@ -3,6 +3,8 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from '../context/UserContext'; // Import UserContext
 
+const networkService = require("../services/NetworkService");
+
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,24 +15,16 @@ export default function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:3001/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password })
-    });
+    const response = await networkService.signin(email, password);
 
-    const data = await response.json();
-
-    if (response.ok) {
-      console.log("Sign-in successful", data); // Log successful sign-in
-      setUser(data.user); // Store user data in context
-      localStorage.setItem('user', JSON.stringify(data.user)); // Store user data in localStorage
+    if (!response.isError()) {
+      console.log("Sign-in successful"); // Log successful sign-in
+      setUser(response.data.user); // Store user data in context
+      localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data in localStorage
       navigate('/'); // Redirect to the main page
     } else {
-      console.error("Sign-in error", data); // Log error
-      setMessage(`Error: ${data.message || data}`);
+      console.error("Sign-in error", response.data); // Log error
+      setMessage(`Error: ${response.data.message || response.data}`);
     }
   };
 

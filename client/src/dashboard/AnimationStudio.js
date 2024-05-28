@@ -283,6 +283,7 @@ export default function UploadAudio() {
                     <Form.Group controlId="formFile" className="mb-3">
                       <Form.Label></Form.Label>
                       <div
+                        className="file-drop-area"
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
                         style={{ border: '2px dashed lightblue', padding: '20px', textAlign: 'center', cursor: 'pointer' }}
@@ -345,8 +346,8 @@ export default function UploadAudio() {
                       <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
                         <Button onClick={handlePlayPause} className="audio-button me-2">
                           {isPlaying ?
-                             <i class="ri-pause-circle-line"></i> :
-                             <i class="ri-play-line"></i> 
+                             <i class="ri-pause-circle-line" style={{"font-size": "1.5em"}}></i> :
+                             <i class="ri-play-line" style={{"font-size": "1.5em"}}></i> 
                           }
                         </Button>
                         <input
@@ -358,10 +359,10 @@ export default function UploadAudio() {
                           className="mx-3"
                           style={{ width: '200px' }}
                         />
-                        <Button onClick={handleStartRecording} className="audio-button ms-2" disabled={isRecording}>
+                        <Button onClick={handleStartRecording} className="audio-button ms-2" style={{"font-size": "1.5em"}} disabled={isRecording}>
                           <i class="ri-record-circle-line"></i>
                         </Button>
-                        <Button onClick={handleStopRecording} className="audio-button ms-2" disabled={!isRecording}>
+                        <Button onClick={handleStopRecording} className="audio-button ms-2" style={{"font-size": "1.5em"}} disabled={!isRecording}>
                           <i class="ri-stop-mini-line"></i>
                         </Button>
                       </div>

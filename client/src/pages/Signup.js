@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link,useNavigate } from "react-router-dom";
 
+const networkService = require("../services/NetworkService");
+
+
 export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,21 +14,15 @@ export default function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:3001/signup', { // Use server port, e.g., 3001
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ email, password, username })
-    });
+    const response = await networkService.signup(email, password, username);
 
-    const data = await response.text();
-
-    if (response.ok) {
+    if (!response.isError()) {
+      console.log("User registered succesfully");
       setMessage('User registered successfully');
       navigate('/pages/signin')
     } else {
-      setMessage(`Error: ${data}`);
+      setMessage(`Error: ${response.data}`);
+      console.log("Error while signing up: ", response.message);
     }
   };
 
@@ -67,7 +64,7 @@ export default function Signup() {
               />
             </div>
             <div className="mb-4">
-              <small>By clicking <strong>Create Account</strong> below, you agree to our terms of service and privacy statement.</small>
+              <small>By clicking <strong style={{"color":"#ffffff"}}>Create Account</strong> below, you agree to our terms of service and privacy statement.</small>
             </div>
             <Button variant="primary" type="submit" className="btn-sign">Create Account</Button>
           </Form>

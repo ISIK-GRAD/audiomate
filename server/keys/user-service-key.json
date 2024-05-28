@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "audiomate-webapp",
+  "private_key_id": "3a3a977d7e28ab3ed255ca454e7ef6be762d422b",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCxi6Ax1CbyZWIX\nVgnwWfu0T2NLlUp/4L/JTwD8cVk6bAhCzL3tzbi+5s8TBIAIUfY+PqjWzh+l/2Zj\n9AdwXWW3yHZum4Ueft46qG9HKI7fPZJnlrHiHwuk4Yjv99hGPiEhQlwAxdI9wKFQ\nqjNHyh77Rhu2adTmvxzAyTS+ZWjartnWD3ajjRz9DFBro3CD5OwPvzaZXp35/zLW\ncj0wK0eFKcyYxV2qD79UDLO+UKHGfbtvwbyiu4V2NGFCdFle7k7dvM38t80QKq+C\nukpdIGaklqmpHgcznpFgHw6T3Fp1T2RVb8F2UAeGU+9RwVJdNaT0u+SjE2aL1azP\nwA+giuHdAgMBAAECggEAR+D7y4CU/fiOpFz4bB65+Q9U52I7BZeTfagnAYzQL4dS\nNt0WHaL2Yw8lkZD2Vqf8FcofZ8uOY5GJPfkrU9H0HtohHHmJBMYfKUdMudXRNc8D\nKT4IqT+hYrDOVDyWiiWYGxN3FPcBvW9xv6sQVMWfEmKZUJn7ECoaNXCgEl8S+sk2\nY1zaWjFNq/0npBsl/MwSdQSPaPr35eojnR3Kt2Egt0e4dXoCuxbc0auBt4BvT834\nSafm8GoTIvMky14XJNF1IWY8tETp5PifAQW1n26xGnJLUWD5IU6KlKsC1R7u6u7J\n8plNU8t6ndj7e/RZ1knl9rMX/gvD5pJK6RSU3o/XnwKBgQDv4D2ikrGiofPpnSw0\nV5MuP0TTZcxaaTDNJfIZmZYTC6NTpmxGL0uNkWRyAkdL7hiRIksyinoWufEP94Ln\ngnLvJDv3Ld03EfnfscCuVHxnyokFf8PGO5oSSFPF/7voEUkEP/zE8m4a3TSerA8t\nYUBYxK+kxbfLctCEHxBV/X/fJwKBgQC9es7axC3JQkG+jXwfAsvU6YBcU5OlFG0u\n2/BvahrDl6r+pQeaWfhXP947WNuMypwJHrp+QzhuEwFn7tWdChR5ApA2inMJQWvs\ngAMVPgIss0gW7yKgARheZFq5PRM0LtrHj4jcP98uKBihVXSRyOBkQA3iD2g8fs48\nGrHvZa5ZWwKBgQChnUiJjyJFe641eKK+xT4xi4kYkN6lD3hEz8sUumjlfhLVmiwb\nAWR7BjlRov1cSBefOSbG74ugYjjrVAyLZFWBj70jJXCE2QSsVTuHeP60gz3cSZ+i\noKeGp9phbZKxoWu7hE0OeHP8f4sjWLOFFJ/g7uuULW5OkZWxXqiH9xq/QwKBgHAC\np0Hf8wkkp+TTkupqJsDogD8UERXna1vmHM5gNQ4nHKiIOmReh1ZcpS0ELFWgeHlT\ntv9pEXTQu2YLZC//g3a9sy7qzXJNQFWAn1HxZCu0mAsmtptLynISdSdIGZAhmqea\nDFfXUkHg5h6Je+2qiCv7Sbm3TfFlLNmPFlzlCRo9AoGBAIywILyoEwPX4saxD6uM\nHgMCw9Pvn3i4G4S5z4nXdcKZjnGAoQvg3siJgJBhrvp6vY6LqgC8e0+VMsOAqNrw\ndq3GmpKlEj9lWKdC8c2Nf3CiqbQYZW1kaRdoKlUYmI/vJisZMWqSISi8TBMKUzeV\nf+uu+eq1AzPhqJhI1KwW6bJG\n-----END PRIVATE KEY-----\n",
+  "client_email": "audiomate-user@audiomate-webapp.iam.gserviceaccount.com",
+  "client_id": "106843999444716249617",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/audiomate-user%40audiomate-webapp.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
