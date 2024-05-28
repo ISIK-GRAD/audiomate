@@ -8,11 +8,18 @@ const networkService = require("../services/NetworkService");
 export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(password !== confirmPassword){
+      setMessage('Passwords do not match!');
+      return;
+    }
 
     const response = await networkService.signup(email, password, username);
 
@@ -21,7 +28,7 @@ export default function Signup() {
       setMessage('User registered successfully');
       navigate('/pages/signin')
     } else {
-      setMessage(`Error: ${response.data}`);
+      setMessage(`ERROR: ${response.data}`);
       console.log("Error while signing up: ", response.message);
     }
   };
@@ -39,10 +46,19 @@ export default function Signup() {
             <div className="mb-3">
               <Form.Label>Email address</Form.Label>
               <Form.Control 
-                type="text" 
+                type="email" 
                 placeholder="Enter your email address" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <Form.Label>Username</Form.Label>
+              <Form.Control 
+                type="text" 
+                placeholder="Enter your username" 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="mb-3">
@@ -55,21 +71,22 @@ export default function Signup() {
               />
             </div>
             <div className="mb-3">
-              <Form.Label>Username</Form.Label>
+              <Form.Label>Confirm Password</Form.Label>
               <Form.Control 
-                type="text" 
-                placeholder="Enter your username" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="password" 
+                placeholder="Enter your password again" 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
+            
             <div className="mb-4">
               <small>By clicking <strong style={{"color":"#ffffff"}}>Create Account</strong> below, you agree to our terms of service and privacy statement.</small>
             </div>
             <Button variant="primary" type="submit" className="btn-sign">Create Account</Button>
           </Form>
 
-          {message && <div className="mt-3">{message}</div>}
+          {message && <div className="mt-3 w-100 d-flex justify-content-center align-items-center" style={{"color" : "red"}}>{message}</div>}
 
           <div className="divider"><span>or sign up using</span></div>
 
