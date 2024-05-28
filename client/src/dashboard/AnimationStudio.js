@@ -278,9 +278,9 @@ export default function UploadAudio() {
           <Col xl="12">
             <Card className="card-one">
               <Card.Body className="p-4">
-                <Row className="g-3">
+                <Row className="g-3" >
                   <Col xl="6">
-                    <Form.Group controlId="formFile" className="mb-3">
+                    <Form.Group controlId="formFile" className="mb-3" >
                       <Form.Label></Form.Label>
                       <div
                         className="file-drop-area"
@@ -292,6 +292,8 @@ export default function UploadAudio() {
                           type="file"
                           accept="audio/*"
                           onChange={handleFileChange}
+                          
+                          style={{color: 'rgba(40, 135, 255, 1)'}}
                         />
                       </div>
                     </Form.Group>
@@ -307,11 +309,11 @@ export default function UploadAudio() {
                   </Col>
                   <Col xl="3" className="mt-xl-9 d-flex justify-content-center align-items-center">
                     <div className="w-100 d-flex justify-content-center align-items-start flex-column">
-                      <span className="badge bg-ui-02 fs-xs"> 
+                      <span className="badge bg-ui-02 fs-xs"  style={{ color: 'black'}}> 
                         Animation Type
                       </span>
                       <Form.Group className="w-100">
-                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange}>
+                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange} style={{ color: 'rgba(40, 135, 255, 1)'}} >
                           {Object.keys(animationConfig)
                             .filter(key => key !== "defaultAnimationName")
                             .map((key) => (
@@ -325,14 +327,14 @@ export default function UploadAudio() {
                   </Col>
                   <Col xl="3" className="d-flex flex-row-reverse">
                     <h4 className="mb-0 w-100 d-flex justify-content-center align-items-center">
-                        <span>
+                        <span className="text-dark fw-semibold mb-1">
                           Instructions
                         </span>
-                        <i style={{"margin-left": "1rem"}} className="tooltip-icon ri-question-mark" data-tooltip="
+                        
+                        <i  style={{"margin-left": "1rem",color: 'rgba(40, 135, 255, 1)'}} className="tooltip-icon ri-question-mark" data-tooltip="
                         • Select and upload or drag an audio file to the file input field&#10;•
                         Use the controls to customize the animation&#10;•
-                        Download a video recording of the animation or save it in your account">
-                          
+                        Download a video recording of the animation or save it in your account">   
                       </i>
                     </h4>
                    
