@@ -290,7 +290,7 @@ export default function UploadAudio() {
                       <div
                         onDrop={handleDrop}
                         onDragOver={handleDragOver}
-                        style={{ border: '2px dashed #ccc', padding: '20px', textAlign: 'center', cursor: 'pointer' }}
+                        style={{ border: '2px dashed lightblue', padding: '20px', textAlign: 'center', cursor: 'pointer' }}
                       >
                         <Form.Control
                           type="file"

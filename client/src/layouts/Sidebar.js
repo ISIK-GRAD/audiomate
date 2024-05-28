@@ -125,21 +125,19 @@ function SidebarMenu({ onUpdateSize }) {
     return (
         <React.Fragment>
             <div className="nav-group show">
-                <div className="nav-label" onClick={toggleMenu}>Dashboard</div>
+                <div className="nav-label" onClick={toggleMenu}>Menu</div>
                 {populateMenu(dashboardMenu)}
             </div>
-            <div className="nav-group show">
+           { /* <div className="nav-group show">
                 <div className="nav-label" onClick={toggleMenu}>Applications</div>
                 {populateMenu(applicationsMenu)}
-            </div>
-            <div className="nav-group show">
+    </div> */}
+           
+           {/* <div className="nav-group show">
                 <div className="nav-label" onClick={toggleMenu}>Pages</div>
                 {populateMenu(pagesMenu)}
             </div>
-            <div className="nav-group show">
-                <div className="nav-label" onClick={toggleMenu}>UI Elements</div>
-                {populateMenu(uiElementsMenu)}
-            </div>
+*/}
         </React.Fragment>
     )
 }

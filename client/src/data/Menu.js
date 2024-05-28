@@ -1,9 +1,14 @@
 
 const dashboardMenu = [
-  {
+ /* {
     "label": "Finance Monitoring",
     "link": "/dashboard/finance",
     "icon": "ri-pie-chart-2-line"
+  },*/
+  {
+    "label": "Profile",
+    "link": "/pages/profile",
+    "icon":"ri-user-line"
   },
   {
     "label": "Animation Studio",
@@ -14,8 +19,8 @@ const dashboardMenu = [
     "label": "Interactive Audio",
     "link": "/dashboard/sales",
     "icon": "ri-pulse-fill"
-  },
-  {
+  }
+ /* {
     "label": "Website Analytics",
     "link": "/dashboard/analytics",
     "icon": "ri-bar-chart-2-line"
@@ -39,11 +44,11 @@ const dashboardMenu = [
     "label": "Product Management",
     "link": "/dashboard/product",
     "icon": "ri-suitcase-2-line"
-  }
+  }*/
 ];
 
 const applicationsMenu = [
-  {
+  /*{
     "label": "File Manager",
     "link": "/apps/file-manager",
     "icon": "ri-folder-2-line"
@@ -86,7 +91,7 @@ const applicationsMenu = [
         "link": "/apps/gallery-video"
       }
     ]
-  }
+  }*/
 ];
 
 const pagesMenu = [
@@ -190,7 +195,7 @@ const pagesMenu = [
 ];
 
 const uiElementsMenu = [
-  {
+ /* {
     "label": "Getting Started",
     "icon": "ri-pencil-ruler-2-line",
     "submenu": [
@@ -426,6 +431,7 @@ const uiElementsMenu = [
       }
     ]
   }
+  */
 ];
 
 export { dashboardMenu, applicationsMenu, pagesMenu, uiElementsMenu };
