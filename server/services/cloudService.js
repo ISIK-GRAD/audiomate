@@ -1,5 +1,3 @@
-const fs = require("fs");
-const readline = require("readline");
 const { google } = require("googleapis");
 const { Readable } = require('stream');
 const {DatabaseResponse, SERVICE_RESPONSE_TYPE} = require('./databaseService');
@@ -29,7 +27,7 @@ const createAndUploadFile = async (file) => {
     const bufferStream = new Readable({
         read() {
             this.push(file.buffer);
-            this.push(null); // Signal the end of the stream
+            this.push(null);
         }
     });
 
