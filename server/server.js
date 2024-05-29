@@ -21,12 +21,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-Object.entries(api.getEndPoints).forEach(([endpoint, func]) => {
-  app.get(endpoint, func);
+Object.entries(api.getEndPoints).forEach(([endpoint, {func, middleware}]) => {
+  middleware ? app.get(endpoint, middleware, func) : app.get(endpoint, func);
 });
 
-Object.entries(api.postEndPoints).forEach(([endpoint, func]) => {
-  app.post(endpoint, func);
+Object.entries(api.postEndPoints).forEach(([endpoint, {func, middleware}]) => {
+  middleware ? app.post(endpoint, middleware, func) : app.post(endpoint, func);
 });
 
 // Define a POST endpoint for signin

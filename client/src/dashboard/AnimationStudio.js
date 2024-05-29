@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Card, Col, Row, Form, ProgressBar } from "react-bootstrap";
 import Header from "../layouts/Header";
+import HeaderMobile from "../layouts/HeaderMobile";
+import Sidebar from "../layouts/Sidebar";
 import Footer from "../layouts/Footer";
 import { Link } from "react-router-dom";
 import * as THREE from "three";
@@ -14,6 +16,7 @@ import "../scss/dashboard/_animationStudio.scss";
 const animationConfig = require("../config/AnimationConfig.json");
 const GlitchCircle = require("../animations/GlitchCircle");
 const MatrixShape = require("../animations/MatrixShape");
+const networkService = require("../services/NetworkService");
 
 export default function UploadAudio() {
   const [audioFile, setAudioFile] = useState(null);
@@ -34,6 +37,9 @@ export default function UploadAudio() {
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig.defaultAnimationName].name);
+  const [animationName, setAnimationName] = useState("");
+
+
   const canvasRef = useRef();
   const guiContainerRef = useRef();
   const analyserRef = useRef();
@@ -113,6 +119,31 @@ export default function UploadAudio() {
       };
     }
   }, [analyser, settings, selectedAnimation]);
+
+  const handleSaveAnimation = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    
+    if(! user ) {
+      alert("You have to sign-in first!");
+      return;
+    }
+    if(! user.email || !audioFile) {
+      console.log("user:", user);
+      console.log("audio file", audioFile);
+      alert("Create an animation first!");
+      return;
+    }
+
+    const response = await networkService.uploadFile(user.email, audioFile, settings);
+    
+    if(!response.isError()){
+      alert("Animation saved successfully");
+    }
+    else{
+      alert("Error saving animation");
+      console.log("Error saving animation", response.message);
+    }
+  }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -270,6 +301,7 @@ export default function UploadAudio() {
   return (
     <React.Fragment>
       <Header />
+      <Sidebar />
       <div className="main main-app p-3 p-lg-4">
         <div className="d-md-flex align-items-center justify-content-between mb-4">
             <h4 className="main-title mb-0">Animation Studio</h4>
@@ -332,7 +364,7 @@ export default function UploadAudio() {
                         </span>
                         
                         <i  style={{"margin-left": "1rem",color: 'rgba(40, 135, 255, 1)'}} className="tooltip-icon ri-question-mark" data-tooltip="
-                        • Select and upload or drag an audio file to the file input field&#10;•
+                        • Select or drag an audio file to the file input field to upload&#10;•
                         Use the controls to customize the animation&#10;•
                         Download a video recording of the animation or save it in your account">   
                       </i>
@@ -344,6 +376,13 @@ export default function UploadAudio() {
                 <Row className="g-4 mt-3">
                   <Col xl="12">
                     <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
+                      <div className="w-100 d-flex justify-content-start align-items-center flex-row-reverse">
+                        <Button onClick={handleSaveAnimation} className="mb-3 w-10">
+                          <span>
+                            Save
+                          </span>
+                        </Button>
+                      </div>
                       <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
                       <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
                         <Button onClick={handlePlayPause} className="audio-button me-2">

@@ -1,9 +1,10 @@
 const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
-const {DatabaseResponse, DATABASE_RESPONSE_TYPE} = require('./databaseService');
+const { Readable } = require('stream');
+const {DatabaseResponse, SERVICE_RESPONSE_TYPE} = require('./databaseService');
 
-const KEYFILEPATH = require("../keys/user-service-key.json");
+const KEYFILEPATH = "./keys/user-service-key.json";
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
 
 const auth = new google.auth.GoogleAuth({
@@ -11,20 +12,30 @@ const auth = new google.auth.GoogleAuth({
     scopes: SCOPES,
 });
 
+const drive = google.drive({version: "v3", auth});
 
-const createAndUploadFile = async (fileName, fileContent) => {
 
-    const drive = google.drive({version: "v3", auth});
+const createAndUploadFile = async (file) => {
+
     let databaseResponse = new DatabaseResponse();
 
+    console.log("auth", auth);
+
     const fileMetaData = {
-        'name': fileName,
-        'parents': []
+        'name': file.originalname,
+        'parents': ['1sZyzbnWNugfIIYpn0feOWEwJsFjZpLb1']
     };
+
+    const bufferStream = new Readable({
+        read() {
+            this.push(file.buffer);
+            this.push(null); // Signal the end of the stream
+        }
+    });
 
     const media = {
         mimeType: 'audio/mpeg',
-        body: fileContent
+        body: bufferStream
     }
     
     const cloudResponse = await drive.files.create({
@@ -39,12 +50,11 @@ const createAndUploadFile = async (fileName, fileContent) => {
             break;
         default:
             console.error("Error uploading file: ", cloudResponse.errors);
-            databaseResponse.setResponse(DATABASE_RESPONSE_TYPE.ERROR);
+            databaseResponse.setResponse(SERVICE_RESPONSE_TYPE.ERROR);
             databaseResponse.setMessage(cloudResponse.errors);
             return databaseResponse;
     }
 
-    drive.close();
     return databaseResponse;
 };
 

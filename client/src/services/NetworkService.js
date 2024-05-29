@@ -76,9 +76,48 @@ const signup = async(email, password, username) => {
     return networkResponse;
 }
 
+
+const uploadFile = async(email, file, props) => {
+    const networkResponse = new NetworkResponse();
+    const formData = new FormData();
+    const animationName = createRandomName(32);
+
+    console.log(`FILE: ${file} | PROPS: ${props} | EMAIL: ${email}`);
+
+    formData.append('file', file, animationName);
+    formData.append('props', JSON.stringify(props));
+    formData.append('email', email);
+
+    const response = await fetch(`${remoteAddress}/upload-file`, {
+      method: 'POST',
+      ContentType: 'multipart/form-data',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        networkResponse.setData(data);
+    } else {
+        networkResponse.setResponse(NETWORK_RESPONSE_TYPE.ERROR);
+        networkResponse.setMessage(data.message);
+    }
+    return networkResponse;
+}
+
+const createRandomName = (length) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
+
 module.exports = {
     NetworkResponse,
     NETWORK_RESPONSE_TYPE,
     signin,
-    signup
+    signup,
+    uploadFile
 }
