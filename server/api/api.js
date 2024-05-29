@@ -54,11 +54,10 @@ const postEndPoints = {
     '/upload-file': 
     {
         func: async(req, res) => {
-            const { email, props } = req.body;
+            const { email, props, animationName } = req.body;
             const file = req.file;
 
-            console.log("REQ:", req);
-            console.log(`EMAIL: ${email} | PROPS: ${props} | FILE: ${JSON.stringify(file)}`); 
+            // TODO Implement adding animation properties to local database according to the email of the user
 
             try {
                 const cloudResponse = await cloudService.createAndUploadFile(file);

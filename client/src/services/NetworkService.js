@@ -77,16 +77,15 @@ const signup = async(email, password, username) => {
 }
 
 
-const uploadFile = async(email, file, props) => {
+const uploadFile = async(email, file, props, animationName) => {
     const networkResponse = new NetworkResponse();
     const formData = new FormData();
-    const animationName = createRandomName(32);
+    const animationId = createRandomId(32);
 
-    console.log(`FILE: ${file} | PROPS: ${props} | EMAIL: ${email}`);
-
-    formData.append('file', file, animationName);
+    formData.append('file', file, animationId);
     formData.append('props', JSON.stringify(props));
     formData.append('email', email);
+    formData.append('animationName', animationName);
 
     const response = await fetch(`${remoteAddress}/upload-file`, {
       method: 'POST',
@@ -105,7 +104,7 @@ const uploadFile = async(email, file, props) => {
     return networkResponse;
 }
 
-const createRandomName = (length) => {
+const createRandomId = (length) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < length; i++) {

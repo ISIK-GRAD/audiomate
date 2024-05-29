@@ -130,11 +130,15 @@ export default function UploadAudio() {
     if(! user.email || !audioFile) {
       console.log("user:", user);
       console.log("audio file", audioFile);
-      alert("Create an animation first!");
+      alert("Upload an audio file first!");
+      return;
+    }
+    if(! animationName){
+      alert("Enter an animation name!");
       return;
     }
 
-    const response = await networkService.uploadFile(user.email, audioFile, settings);
+    const response = await networkService.uploadFile(user.email, audioFile, settings, animationName);
     
     if(!response.isError()){
       alert("Animation saved successfully");
@@ -376,10 +380,18 @@ export default function UploadAudio() {
                 <Row className="g-4 mt-3">
                   <Col xl="12">
                     <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
-                      <div className="w-100 d-flex justify-content-start align-items-center flex-row-reverse">
-                        <Button onClick={handleSaveAnimation} className="mb-3 w-10">
+                      <div className="w-100 d-flex justify-content-end align-items-center flex-row">
+                      <Form.Group className="w-25 mb-3 me-3">
+                        <Form.Control 
+                          type="text" 
+                          value={animationName} 
+                          onChange={e => setAnimationName(e.target.value)} 
+                          placeholder="Enter animation name"
+                        />
+                      </Form.Group>
+                        <Button onClick={handleSaveAnimation} className="mb-3 w-15">
                           <span>
-                            Save
+                            Save To Library
                           </span>
                         </Button>
                       </div>
