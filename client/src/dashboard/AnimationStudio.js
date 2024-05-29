@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Card, Col, Row, Form, ProgressBar } from "react-bootstrap";
 import Header from "../layouts/Header";
-import HeaderMobile from "../layouts/HeaderMobile";
 import Sidebar from "../layouts/Sidebar";
 import Footer from "../layouts/Footer";
 import { Link } from "react-router-dom";
+import Draggable from "react-draggable";
 import * as THREE from "three";
 import { GUI } from 'dat.gui';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
@@ -115,7 +115,6 @@ export default function UploadAudio() {
       return () => {
         gui.destroy();
         renderer.dispose();
-        scene.dispose();
       };
     }
   }, [analyser, settings, selectedAnimation]);
@@ -419,8 +418,27 @@ export default function UploadAudio() {
                           <i class="ri-stop-mini-line"></i>
                         </Button>
                       </div>
-                      <div ref={guiContainerRef} style={{ position: 'absolute', top: '10px', right: '10px', padding: '10px', borderRadius: '5px' }}></div>
-                    </div>
+                      <Draggable handle=".drag-handle">
+                        <div ref={guiContainerRef} style={{
+                            backgroundColor: "#000",
+                            position: 'absolute',
+                            top: '10px',
+                            right: '0px',
+                            display: 'inline-block',
+                          }}>
+                          {audioFile ? 
+                            <div className="drag-handle" style={{
+                              height: '20px', 
+                              backgroundColor: "#333", 
+                              cursor: 'move'
+                              }}>
+                            </div>
+                            : ""
+                        }
+                          
+                        </div>
+                      </Draggable>                  
+                      </div>
                   </Col>
                 </Row>
                 
