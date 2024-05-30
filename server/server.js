@@ -4,7 +4,7 @@
   const {sequelize} = require('./models/index');
   const api = require('./api/api');
 
-  sequelize.sync({force: false})
+  sequelize.sync({force: false, alter: true})
     .then(() => {
       console.log('Database & tables created!');
     })
