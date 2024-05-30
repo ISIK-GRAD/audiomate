@@ -14,6 +14,11 @@ const sequelize = new Sequelize(
   }
 );
 
+const User = require('./user')(sequelize);
+const Animation = require('./animation')(sequelize);
+
+require('./associations')(sequelize);
+
 // Test the connection
 sequelize.authenticate()
   .then(() => {
@@ -23,4 +28,4 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-module.exports = sequelize;
+module.exports = {sequelize, User, Animation}

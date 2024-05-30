@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const { User, Animation } = require('../models/index'); 
 const bcrypt = require('bcrypt');
 
 
@@ -79,9 +79,42 @@ const signup = async(email, password, username) => {
     return response;
 }
 
+const addAnimationToUser = async(email, props, animationId, animationName, animationType) => {
+    const response = new DatabaseResponse();
+    if (!email || !props || !animationName || !animationType) {
+        response.setResponse(SERVICE_RESPONSE_TYPE.MISSING_FIELDS);
+        return response;
+    }
+
+    try {
+        const user = await User.findOne({ where: { email } });
+        if (!user) {
+            response.setResponse(SERVICE_RESPONSE_TYPE.NOT_FOUND);
+            return response;
+        }
+
+        const animation = await Animation.create({ 
+            id: animationId,
+            name: animationName,
+            animationType: animationType,
+            settings: props,
+            createdBy: email});
+
+        if (!animation) {
+            response.setResponse(SERVICE_RESPONSE_TYPE.ERROR);
+        }
+    } catch (err) {
+        console.error('Error adding animation:', err);
+        response.setResponse(SERVICE_RESPONSE_TYPE.ERROR);
+    }
+
+    return response;
+}
+
 module.exports = {
     SERVICE_RESPONSE_TYPE,
     DatabaseResponse,
     signin,
-    signup
+    signup,
+    addAnimationToUser
 }
