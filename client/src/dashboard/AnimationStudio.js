@@ -137,14 +137,14 @@ export default function UploadAudio() {
       return;
     }
 
-    const response = await networkService.uploadFile(user.email, audioFile, settings, animationName);
+    const response = await networkService.uploadFile(user.email, audioFile, settings, animationName, selectedAnimation);
     
     if(!response.isError()){
       alert("Animation saved successfully");
     }
     else{
       alert("Error saving animation");
-      console.log("Error saving animation", response.message);
+      console.log("Error saving animation");
     }
   }
 
@@ -377,23 +377,26 @@ export default function UploadAudio() {
                 </Row>
                 <hr />
                 <Row className="g-4 mt-3">
+                  <div className="w-100 d-flex justify-content-end align-items-center flex-row">
+                    <Form.Group className="w-25 mb-3 me-3">
+                      <Form.Control 
+                        type="text" 
+                        value={animationName} 
+                        onChange={e => setAnimationName(e.target.value)} 
+                        placeholder="Enter animation name"
+                      />
+                    </Form.Group>
+                      <Button onClick={handleSaveAnimation} className="mb-3 w-15">
+                        <span>
+                          Save To Library
+                        </span>
+                      </Button>
+                    </div>
+                </Row>
+                <Row className="g-4">
                   <Col xl="12">
                     <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
-                      <div className="w-100 d-flex justify-content-end align-items-center flex-row">
-                      <Form.Group className="w-25 mb-3 me-3">
-                        <Form.Control 
-                          type="text" 
-                          value={animationName} 
-                          onChange={e => setAnimationName(e.target.value)} 
-                          placeholder="Enter animation name"
-                        />
-                      </Form.Group>
-                        <Button onClick={handleSaveAnimation} className="mb-3 w-15">
-                          <span>
-                            Save To Library
-                          </span>
-                        </Button>
-                      </div>
+                      
                       <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
                       <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
                         <Button onClick={handlePlayPause} className="audio-button me-2">
@@ -422,9 +425,10 @@ export default function UploadAudio() {
                         <div ref={guiContainerRef} style={{
                             backgroundColor: "#000",
                             position: 'absolute',
-                            top: '10px',
+                            top: '0px',
                             right: '0px',
                             display: 'inline-block',
+                            zIndex: 9999
                           }}>
                           {audioFile ? 
                             <div className="drag-handle" style={{

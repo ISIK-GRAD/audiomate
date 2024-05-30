@@ -44,7 +44,6 @@ const postEndPoints = {
                 return res.status(400).send('User already exists');
             }
             else if(databaseResponse.responseType === SERVICE_RESPONSE_TYPE.ERROR){
-                console.error('Error creating user:', err);
                 return res.status(500).send('Server error');
             }
         },
@@ -54,24 +53,38 @@ const postEndPoints = {
     '/upload-file': 
     {
         func: async(req, res) => {
-            const { email, props, animationName } = req.body;
+            const { email, props, animationName, animationType } = req.body;
             const file = req.file;
 
-            // TODO Implement adding animation properties to local database according to the email of the user
-
-            try {
-                const cloudResponse = await cloudService.createAndUploadFile(file);
-                if (cloudResponse.responseType === SERVICE_RESPONSE_TYPE.SUCCESS) {
-                    return res.status(200).json({ message: 'File uploaded successfully' });
-                } else {
-                    return res.status(500).json({ message: `Server error: ${cloudResponse.message}` });
-                }
-            } catch (err) {
-                console.error('Error uploading file:', err);
-                return res.status(500).json({ message: `Server error: ${err.message}` });
+            const cloudResponse = await cloudService.createAndUploadFile(file);
+            const databaseResponse = await databaseService.addAnimationToUser(email, props, file.originalname, animationName, animationType);
+            
+            if (cloudResponse.responseType === SERVICE_RESPONSE_TYPE.SUCCESS && databaseResponse.responseType === SERVICE_RESPONSE_TYPE.SUCCESS) {
+                return res.status(200).json({ message: 'File uploaded successfully' });
+            } else {
+                return res.status(500).json({ message: `Server error: CLOUD ERROR:${cloudResponse.message} DATABASE ERROR:${databaseResponse.message}`});
             }
         },
         middleware: [upload.single('file')]
+    },
+
+    '/search-file':
+    {
+        func: async(req, res) => {
+            const {filename} = req.body;
+            const cloudResponse = await cloudService.searchFile(filename);
+
+            if(cloudResponse.responseType === SERVICE_RESPONSE_TYPE.SUCCESS){
+                return res.status(200).json({ message: 'File found', file: cloudResponse.data });
+            }
+            else if(cloudResponse.responseType === SERVICE_RESPONSE_TYPE.NOT_FOUND){
+                return res.status(404).send('File not found');
+            }
+            else{
+                return res.status(500).send('Server error');
+            }
+        },
+        middleware: null
     }
 }
 
