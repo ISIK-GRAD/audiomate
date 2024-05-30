@@ -48,6 +48,9 @@ jspm_packages/
 *databaseConfig.json
 package-lock.json
 
+# Key files
+/server/keys/
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
