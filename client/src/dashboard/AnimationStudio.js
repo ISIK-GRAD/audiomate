@@ -386,11 +386,11 @@ export default function UploadAudio() {
                         placeholder="Enter animation name"
                       />
                     </Form.Group>
-                      <Button onClick={handleSaveAnimation} className="mb-3 w-15">
-                        <span>
-                          Save To Library
-                        </span>
-                      </Button>
+                    <Button onClick={handleSaveAnimation} className="mb-3 w-15">
+                      <span>
+                        Save To Library
+                      </span>
+                    </Button>
                     </div>
                 </Row>
                 <Row className="g-4">

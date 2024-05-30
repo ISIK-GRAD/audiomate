@@ -1,0 +1,17 @@
+@import "../variables";
+
+:not([data-skin="dark"]){
+    .profile-gallery-header{
+        border-bottom: 1px solid rgba(226, 229, 236, 0.6);
+        color: $gray-900;
+    }
+}
+
+[data-skin="dark"]{
+    .profile-gallery-header{
+        border-bottom: 1px solid #222b41 !important;
+        color: #fff;
+    }
+}
+
+
