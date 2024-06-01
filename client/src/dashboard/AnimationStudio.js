@@ -259,8 +259,28 @@ export default function UploadAudio() {
   };
 
   const handleStartRecording = () => {
-    const stream = canvasRef.current.captureStream(25);
-    const recorder = new MediaRecorder(stream);
+
+    const videoStream = canvasRef.current.captureStream(60);
+
+    
+    if (!audioContext || !sourceRef.current) {
+      console.error("Audio context or source is not set up correctly.");
+      return;
+    }
+
+    
+    const audioDestination = audioContext.createMediaStreamDestination();
+    analyserRef.current.connect(audioDestination);
+    sourceRef.current.connect(audioDestination);
+
+  
+    const audioStream = audioDestination.stream;
+
+  
+    const combinedStream = new MediaStream([...videoStream.getVideoTracks(), ...audioStream.getAudioTracks()]);
+
+   
+    const recorder = new MediaRecorder(combinedStream);
     chunksRef.current = [];
 
     recorder.ondataavailable = e => chunksRef.current.push(e.data);
@@ -279,7 +299,8 @@ export default function UploadAudio() {
     recorder.start();
     recorderRef.current = recorder;
     setIsRecording(true);
-  };
+};
+
 
   const handleStopRecording = () => {
     if (recorderRef.current && recorderRef.current.state === 'recording') {
