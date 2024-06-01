@@ -33,14 +33,10 @@ export default function Profile() {
               <Col xs="9" className="d-flex justify-content-start align-items-center">
                 <Row className="row-cols-sm-auto g-4 g-md-5 g-xl-4 g-xxl-5">
                   {[
-                    {
-                      "icon": "ri-medal-2-line",
-                      "text": "5 Certificates",
-                      "label": "Achievements"
-                    }, {
-                      "icon": "ri-suitcase-line",
-                      "text": "10+ Years",
-                      "label": "Experience"
+                     {
+                      "icon": "ri-disc-line",
+                      "text": "0",
+                      "label": "Animations"
                     }, {
                       "icon": "ri-team-line",
                       "text": "356",

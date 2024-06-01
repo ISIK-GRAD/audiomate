@@ -259,38 +259,36 @@ export default function UploadAudio() {
   };
 
   const handleStartRecording = () => {
-
     const videoStream = canvasRef.current.captureStream(60);
 
-    
     if (!audioContext || !sourceRef.current) {
       console.error("Audio context or source is not set up correctly.");
       return;
     }
 
-    
     const audioDestination = audioContext.createMediaStreamDestination();
     analyserRef.current.connect(audioDestination);
     sourceRef.current.connect(audioDestination);
-
-  
     const audioStream = audioDestination.stream;
-
-  
     const combinedStream = new MediaStream([...videoStream.getVideoTracks(), ...audioStream.getAudioTracks()]);
 
-   
-    const recorder = new MediaRecorder(combinedStream);
+    let options = { mimeType: 'video/mp4' }; // Try MP4 first
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+      console.log('MP4 format not supported, falling back to WebM');
+      options = { mimeType: 'video/webm' }; // Fallback to WebM
+    }
+
+    const recorder = new MediaRecorder(combinedStream, options);
     chunksRef.current = [];
 
     recorder.ondataavailable = e => chunksRef.current.push(e.data);
     recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+      const blob = new Blob(chunksRef.current, { type: options.mimeType });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = 'visualizer.webm';
+      a.download = `visualizer.${options.mimeType.split('/')[1]}`; // Set the file extension based on MIME type
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -300,6 +298,7 @@ export default function UploadAudio() {
     recorderRef.current = recorder;
     setIsRecording(true);
 };
+
 
 
   const handleStopRecording = () => {
@@ -502,3 +501,4 @@ export default function UploadAudio() {
     </React.Fragment>
   );
 }
+ 
