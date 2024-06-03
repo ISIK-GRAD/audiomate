@@ -16,8 +16,12 @@ export const UserProvider = ({ children }) => {
     }
   }, [user]);
 
+  const logout =()=>{
+    localStorage.removeItem('user');
+    setUser({username:'Guest'});
+  }
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser,logout }}>
       {children}
     </UserContext.Provider>
   );

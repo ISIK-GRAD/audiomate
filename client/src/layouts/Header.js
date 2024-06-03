@@ -6,7 +6,7 @@ import notification from "../data/Notification";
 import { UserContext } from '../context/UserContext'; // Import UserContext
 
 export default function Header() {
-  const { user } = useContext(UserContext); // Get user from context
+  const { user,logout } = useContext(UserContext); // Get user from context
 
   const [theme, setTheme] = useState(localStorage.getItem('skin-mode') || 'light');
 
@@ -145,7 +145,7 @@ export default function Header() {
                 <Link to=""><i className="ri-question-line"></i> Help Center</Link>
                 <Link to=""><i className="ri-lock-line"></i> Privacy Settings</Link>
                 <Link to=""><i className="ri-user-settings-line"></i> Account Settings</Link>
-                <Link to="/pages/signin"><i className="ri-logout-box-r-line"></i> Log Out</Link>
+                <Link to="/pages/signin" onClick={logout} ><i className="ri-logout-box-r-line"></i> Log Out</Link>
               </nav>
             </div>
           </Dropdown.Menu>
