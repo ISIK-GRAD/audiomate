@@ -138,11 +138,36 @@ const createRandomId = (length) => {
     return result;
 }
 
+const fetchAnimationsOfUser = async (email) => {
+    const networkResponse = new NetworkResponse();
+    const response = await fetch(`${remoteAddress}/fetch-animations-of-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        networkResponse.setData(data.animations);
+    } else if(response.status === 404) {
+        networkResponse.setResponse(NETWORK_RESPONSE_TYPE.NOT_FOUND);
+    }
+    else if(response.status === 400){
+        networkResponse.setResponse(NETWORK_RESPONSE_TYPE.MISSING_FIELDS);
+    }
+    return networkResponse;
+
+}
+
 module.exports = {
     NetworkResponse,
     NETWORK_RESPONSE_TYPE,
     signin,
     signup,
     uploadFile,
-    searchFile
+    searchFile,
+    fetchAnimationsOfUser
 }

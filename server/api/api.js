@@ -2,6 +2,7 @@ const databaseService = require('../services/databaseService');
 const cloudService = require('../services/cloudService');
 const {SERVICE_RESPONSE_TYPE} = require('../services/databaseService');
 const multer = require("multer");
+const user = require('../models/user');
 const storage = multer.memoryStorage(); // Stores files in memory
 const upload = multer({ storage: storage });
 
@@ -85,7 +86,43 @@ const postEndPoints = {
             }
         },
         middleware: null
-    }
+    },
+
+    '/fetch-animations-of-user': 
+    {
+        func: async(req, res) => {
+            console.log("API RECEIVED FETCH ANIMATIONS OF USER REQUEST");
+            const {email} = req.body;
+            const userAnimations = await databaseService.fetchAnimationsOfUser(email);
+
+            if(userAnimations.responseType === SERVICE_RESPONSE_TYPE.NOT_FOUND){
+                return res.status(404).send();
+            }
+            else if(userAnimations.responseType === SERVICE_RESPONSE_TYPE.MISSING_FIELDS){
+                return res.status(400).send();
+            }
+            
+            const userAudios = await cloudService.fetchAudioForAnimations(userAnimations.data.animations.map(animation => animation.id));
+
+            if(userAudios.responseType === SERVICE_RESPONSE_TYPE.SUCCESS){
+                return res.status(200).json({ 
+                    animations: userAnimations.data.animations.map((animation, index) => {
+                        return {
+                            id: animation.id,
+                            name: animation.name,
+                            animationType: animation.animationType,
+                            settings: animation.settings,
+                            audio: userAudios.data.filter(audio => audio.name === animation.id)[0].content
+                        }
+                    })
+                });
+            }
+            else if(userAudios.responseType === SERVICE_RESPONSE_TYPE.NOT_FOUND){
+                return res.status(404).send();
+            }
+        },
+        middleware: null
+    },
 }
 
 const getEndPoints = {

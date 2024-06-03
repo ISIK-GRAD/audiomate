@@ -111,10 +111,39 @@ const addAnimationToUser = async(email, props, animationId, animationName, anima
     return response;
 }
 
+const fetchAnimationsOfUser = async(email) => {
+    const response = new DatabaseResponse();
+
+    if(!email){
+        response.setResponse(SERVICE_RESPONSE_TYPE.MISSING_FIELDS);
+        return response;
+    }
+
+    try{
+        const user = await User.findOne({ where: { email } });
+        if(!user){
+            response.setResponse(SERVICE_RESPONSE_TYPE.NOT_FOUND);
+            return response;
+        }
+        const animations = await Animation.findAll({ where: { createdBy: email } });
+        if(!animations){
+            response.setResponse(SERVICE_RESPONSE_TYPE.NOT_FOUND);
+            return response;
+        }
+        response.setData({animations: animations});
+    }
+    catch(err){
+        console.error('Error fetching animations:', err);
+        response.setResponse(SERVICE_RESPONSE_TYPE.ERROR);
+    }
+    return response;
+}
+
 module.exports = {
     SERVICE_RESPONSE_TYPE,
     DatabaseResponse,
     signin,
     signup,
-    addAnimationToUser
+    addAnimationToUser,
+    fetchAnimationsOfUser
 }

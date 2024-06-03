@@ -79,6 +79,7 @@ export default function UploadAudio() {
       effectsFolder.add(settings, 'glitch').name('Glitch Effect').onChange(toggleGlitchEffect);
       effectsFolder.open();
 
+      guiContainerRef.current.removeChild(guiContainerRef.current.firstChild)
       guiContainerRef.current.appendChild(gui.domElement);
 
       switch (selectedAnimation) {
@@ -115,6 +116,9 @@ export default function UploadAudio() {
       return () => {
         gui.destroy();
         renderer.dispose();
+        if(audioContext){
+          audioContext.close();
+        }
       };
     }
   }, [analyser, settings, selectedAnimation]);
@@ -224,7 +228,8 @@ export default function UploadAudio() {
       if (isPlaying) {
         sourceRef.current.stop();
         setIsPlaying(false);
-      } else {
+      } 
+      else {
         const newSource = audioContext.createBufferSource();
         newSource.buffer = sourceRef.current.buffer;
         newSource.connect(analyserRef.current);

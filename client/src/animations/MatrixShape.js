@@ -63,6 +63,8 @@ const prepare = (scene, camera) => {
 
 const animate = (dataArray, composer) => {
 
+    console.log("matrix shape animation");
+
     var lowerHalfArray = dataArray.slice(0, (dataArray.length/2) - 1);
     var upperHalfArray = dataArray.slice((dataArray.length/2) - 1, dataArray.length - 1);
 
@@ -82,8 +84,8 @@ const animate = (dataArray, composer) => {
     var upperMinFr = upperMin / upperHalfArray.length;
 
 
-    makeRoughGround(group.children[0], modulate(lowerAvgFr, 0, 1, 0.25, 3));
-    makeRoughGround(group.children[1], modulate(lowerMaxFr, 0, 1, 0.2, 6));
+    makeRoughGround(group.children[0], modulate(lowerAvgFr, 0, 1, 0.25, 0.5));
+    makeRoughGround(group.children[1], modulate(lowerMaxFr, 0, 1, 0.2, 1));
     
     makeRoughBall(group.children[2], modulate(Math.pow(upperAvg, 0.4), 0, 1, 0, 8), modulate(upperMaxFr, 0, 1, 0, 4));
     makeRoughBall(group.children[3], modulate(Math.pow(lowerAvg, 0.4), 0, 1, 0, 4), modulate(upperAvgFr, 0, 1, 0, 8));
