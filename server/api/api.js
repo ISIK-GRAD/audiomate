@@ -111,7 +111,10 @@ const postEndPoints = {
                             id: animation.id,
                             name: animation.name,
                             animationType: animation.animationType,
-                            settings: animation.settings,
+                            createdBy: animation.createdBy,
+                            createdAt: animation.createdAt,
+                            updatedAt : animation.updatedAt,
+                            settings: JSON.parse(animation.settings),
                             audio: userAudios.data.filter(audio => audio.name === animation.id)[0].content
                         }
                     })

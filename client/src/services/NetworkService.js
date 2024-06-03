@@ -151,7 +151,13 @@ const fetchAnimationsOfUser = async (email) => {
     const data = await response.json();
 
     if (response.ok) {
-        networkResponse.setData(data.animations);
+        networkResponse.setData(data.animations.map(animation => 
+            {
+                return {
+                    ...animation,
+                    settings: JSON.parse(animation.settings)
+                };
+            }));
     } else if(response.status === 404) {
         networkResponse.setResponse(NETWORK_RESPONSE_TYPE.NOT_FOUND);
     }

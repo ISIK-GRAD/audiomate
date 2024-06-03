@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 const GUI = require('dat.gui');
 
-const animate = (audioData, controls, composer, particleSystem, settings) => {
+const animate = ({audioData, controls, composer, particleSystem, settings}) => {
 
     const positions = particleSystem.geometry.attributes.position.array;
     const colors = particleSystem.geometry.attributes.color.array;
@@ -24,7 +23,7 @@ const animate = (audioData, controls, composer, particleSystem, settings) => {
     composer.render();
 };
 
-const prepare = (settings, gui, glitchPass, setSettingsCallback) => {
+const prepare = ({settings, gui=null, glitchPass, setSettingsCallback=null}) => {
     // Create particles
     const particleCount = settings.particleCount;
     const particles = new THREE.BufferGeometry();
@@ -33,20 +32,20 @@ const prepare = (settings, gui, glitchPass, setSettingsCallback) => {
     const sizes = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
-    const angle = (i / particleCount) * Math.PI * 2;
-    const x = Math.cos(angle) * settings.radius;
-    const y = Math.sin(angle) * settings.radius;
-    const z = Math.random() * 20 - 10;
+        const angle = (i / particleCount) * Math.PI * 2;
+        const x = Math.cos(angle) * settings.radius;
+        const y = Math.sin(angle) * settings.radius;
+        const z = Math.random() * 20 - 10;
 
-    positions[i * 3] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
+        positions[i * 3] = x;
+        positions[i * 3 + 1] = y;
+        positions[i * 3 + 2] = z;
 
-    colors[i * 3] = 0.5;
-    colors[i * 3 + 1] = 0.5;
-    colors[i * 3 + 2] = 0.5;
+        colors[i * 3] = 0.5;
+        colors[i * 3 + 1] = 0.5;
+        colors[i * 3 + 2] = 0.5;
 
-    sizes[i] = settings.particleSize;
+        sizes[i] = settings.particleSize;
     }
 
     particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -63,58 +62,61 @@ const prepare = (settings, gui, glitchPass, setSettingsCallback) => {
 
     const particleSystem = new THREE.Points(particles, material);
 
-    gui.addColor(settings, 'particleColor').name('Particle Color').onChange((value) => {
-        setSettingsCallback((prevSettings) => ({ ...prevSettings, particleColor: value }));
-        particleSystem.material.color.set(value);
-    });
-    gui.add(settings, 'particleSize', 0.1, 10.0).name('Particle Size').onChange((value) => {
-        setSettingsCallback((prevSettings) => ({ ...prevSettings, particleSize: value }));
-        particleSystem.material.size = value;
-    });
-    gui.add(settings, 'particleCount', 100, 2000).name('Particle Count').onChange((value) => {
-        setSettingsCallback((prevSettings) => ({ ...prevSettings, particleCount: value }));
-        // Update particle count
-        const newPositions = new Float32Array(value * 3);
-        const newColors = new Float32Array(value * 3);
-        const newSizes = new Float32Array(value);
-        for (let i = 0; i < value; i++) {
-        const angle = (i / value) * Math.PI * 2;
-        const x = Math.cos(angle) * settings.radius;
-        const y = Math.sin(angle) * settings.radius;
-        const z = Math.random() * 20 - 10;
+    if(gui){
+        gui.addColor(settings, 'particleColor').name('Particle Color').onChange((value) => {
+            setSettingsCallback((prevSettings) => ({ ...prevSettings, particleColor: value }));
+            particleSystem.material.color.set(value);
+        });
+        gui.add(settings, 'particleSize', 0.1, 10.0).name('Particle Size').onChange((value) => {
+            setSettingsCallback((prevSettings) => ({ ...prevSettings, particleSize: value }));
+            particleSystem.material.size = value;
+        });
+        gui.add(settings, 'particleCount', 100, 2000).name('Particle Count').onChange((value) => {
+            setSettingsCallback((prevSettings) => ({ ...prevSettings, particleCount: value }));
+            // Update particle count
+            const newPositions = new Float32Array(value * 3);
+            const newColors = new Float32Array(value * 3);
+            const newSizes = new Float32Array(value);
+            for (let i = 0; i < value; i++) {
+            const angle = (i / value) * Math.PI * 2;
+            const x = Math.cos(angle) * settings.radius;
+            const y = Math.sin(angle) * settings.radius;
+            const z = Math.random() * 20 - 10;
+    
+            newPositions[i * 3] = x;
+            newPositions[i * 3 + 1] = y;
+            newPositions[i * 3 + 2] = z;
+    
+            newColors[i * 3] = 0.5;
+            newColors[i * 3 + 1] = 0.5;
+            newColors[i * 3 + 2] = 0.5;
+    
+            newSizes[i] = settings.particleSize;
+            }
+            particleSystem.geometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
+            particleSystem.geometry.setAttribute('color', new THREE.BufferAttribute(newColors, 3));
+            particleSystem.geometry.setAttribute('size', new THREE.BufferAttribute(newSizes, 1));
+        });
+        gui.add(settings, 'radius', 1, 20).name('Radius').onChange((value) => {
+            setSettingsCallback((prevSettings) => ({ ...prevSettings, radius: value }));
+            // Update particle positions based on new radius
+            const positions = particleSystem.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+            const angle = (i / particleCount) * Math.PI * 2;
+            const x = Math.cos(angle) * value;
+            const y = Math.sin(angle) * value;
+            positions[i * 3] = x;
+            positions[i * 3 + 1] = y;
+            }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+        });
+        gui.add(settings, 'glitch').name('Glitch Effect').onChange((value) => {
+            glitchPass.enabled = value;
+            setSettingsCallback((prevSettings) => ({ ...prevSettings, glitch: value }));
+        });    
+    }
 
-        newPositions[i * 3] = x;
-        newPositions[i * 3 + 1] = y;
-        newPositions[i * 3 + 2] = z;
-
-        newColors[i * 3] = 0.5;
-        newColors[i * 3 + 1] = 0.5;
-        newColors[i * 3 + 2] = 0.5;
-
-        newSizes[i] = settings.particleSize;
-        }
-        particleSystem.geometry.setAttribute('position', new THREE.BufferAttribute(newPositions, 3));
-        particleSystem.geometry.setAttribute('color', new THREE.BufferAttribute(newColors, 3));
-        particleSystem.geometry.setAttribute('size', new THREE.BufferAttribute(newSizes, 1));
-    });
-    gui.add(settings, 'radius', 1, 20).name('Radius').onChange((value) => {
-        setSettingsCallback((prevSettings) => ({ ...prevSettings, radius: value }));
-        // Update particle positions based on new radius
-        const positions = particleSystem.geometry.attributes.position.array;
-        for (let i = 0; i < particleCount; i++) {
-        const angle = (i / particleCount) * Math.PI * 2;
-        const x = Math.cos(angle) * value;
-        const y = Math.sin(angle) * value;
-        positions[i * 3] = x;
-        positions[i * 3 + 1] = y;
-        }
-        particleSystem.geometry.attributes.position.needsUpdate = true;
-    });
-    gui.add(settings, 'glitch').name('Glitch Effect').onChange((value) => {
-        glitchPass.enabled = value;
-        setSettingsCallback((prevSettings) => ({ ...prevSettings, glitch: value }));
-    });
-
+    
     return particleSystem;
 }
 

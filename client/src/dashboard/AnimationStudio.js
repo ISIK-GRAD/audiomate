@@ -86,13 +86,19 @@ export default function UploadAudio() {
         case "GlitchCircle":
           const glitchPass = new GlitchPass();
           composer.addPass(glitchPass);
-          const particleSystem = GlitchCircle.prepare(settings, gui, glitchPass, setSettings);
+          const particleSystem = GlitchCircle.prepare({settings, gui, glitchPass, setSettings});
           scene.add(particleSystem);
           camera.position.z = 30;
           const animateGlitchCircle = () => {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
-              GlitchCircle.animate(dataArray, controls, composer, particleSystem, settings);
+              GlitchCircle.animate({
+                audioData: dataArray, 
+                controls: controls, 
+                composer: composer, 
+                particleSystem: particleSystem, 
+                settings: settings
+              });
             }
             requestAnimationFrame(animateGlitchCircle);
           };

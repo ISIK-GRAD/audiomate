@@ -49,16 +49,6 @@ export default function Profile() {
     };
   }, [user]);
   
-  const handleErrorResponse = (response) => {
-    if (response.responseType === NETWORK_RESPONSE_TYPE.NOT_FOUND) {
-      console.log("404 404 404");
-      setAnimations([]);
-    } else if (response.responseType === NETWORK_RESPONSE_TYPE.ERROR) {
-      console.error("[PROFILE] Error fetching animations: ");
-    } else if (response.responseType === NETWORK_RESPONSE_TYPE.MISSING_FIELDS) {
-      console.error("[PROFILE] Missing fields while fetching animations: ");
-    }
-  }
 
   return (
     <React.Fragment>
@@ -83,7 +73,7 @@ export default function Profile() {
                   {[
                      {
                       "icon": "ri-disc-line",
-                      "text": "0",
+                      "text": animations ? animations.length : 0,
                       "label": "Animations"
                     }, {
                       "icon": "ri-team-line",
@@ -120,14 +110,12 @@ export default function Profile() {
             </Row>
 
             <Row className="profile-gallery">
-              <div className="profile-gallery-container w-100 d-flex flex-wrap">
+              <div className="profile-gallery-container w-100 d-flex flex-wrap mt-3">
                 {animations && animations.length > 0 ? (
                   animations.map((animation, index) => (
-                    <Col key={index} xs={12} sm={6} md={4} className="p-2">
-                      <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%' }}>
-                        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-                          <AnimationCard animation={animation} />
-                        </div>
+                    <Col key={index} xs={12} sm={6} md={4} className="p-2 animation-flex-slot">
+                      <div className="profile-gallery-animation-container">
+                        <AnimationCard style={{height:"100%"}} className="h-100" animation={animation}/>
                       </div>
                     </Col>
                   ))
@@ -147,7 +135,11 @@ export default function Profile() {
           </Col>
           
         </Row>
-        <Footer />
+        
+        <div className="mt-5 pt-5">
+          <Footer />
+        </div>
+        
       </div>
     </React.Fragment>
   );

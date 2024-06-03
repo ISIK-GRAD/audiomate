@@ -63,8 +63,6 @@ const prepare = (scene, camera) => {
 
 const animate = (dataArray, composer) => {
 
-    console.log("matrix shape animation");
-
     var lowerHalfArray = dataArray.slice(0, (dataArray.length/2) - 1);
     var upperHalfArray = dataArray.slice((dataArray.length/2) - 1, dataArray.length - 1);
 
