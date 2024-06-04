@@ -13,6 +13,12 @@ export default function Signup() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
+  const validatePassword = (password) => {
+    const minLength = password.length > 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    console.log("Length: ", password.length, "Upper case: ", hasUpperCase)
+    return minLength && hasUpperCase;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,7 +26,11 @@ export default function Signup() {
       setMessage('Passwords do not match!');
       return;
     }
-
+    if(!validatePassword(password)){
+      setMessage('Password must be at least 8 characters long and contain at least one uppercase letter!');
+      return;
+    }
+    
     const response = await networkService.signup(email, password, username);
 
     if (!response.isError()) {

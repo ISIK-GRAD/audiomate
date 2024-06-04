@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { UserContext } from '../context/UserContext'; // Import UserContext
+import { UserContext } from '../context/UserContext'; 
 
 const networkService = require("../services/NetworkService");
 
@@ -9,19 +9,18 @@ export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
-  const { setUser } = useContext(UserContext); // Get setUser from UserContext
+  const { setUser } = useContext(UserContext); 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     const response = await networkService.signin(email, password);
-
     if (!response.isError()) {
-      console.log("Sign-in successful"); // Log successful sign-in
-      setUser(response.data.user); // Store user data in context
-      localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data in localStorage
-      navigate('/'); // Redirect to the main page
+      console.log("Sign-in successful"); 
+      setUser(response.data.user); 
+      localStorage.setItem('user', JSON.stringify(response.data.user)); 
+      navigate('/'); 
     } else {
       console.error("Sign-in error", response.data); // Log error
       setMessage(`Error: ${response.data.message || response.data}`);
@@ -58,10 +57,10 @@ export default function Signin() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" variant="primary" className="btn-sign">
+            <Button type="submit" variant="primary" className="btn-sign" onClick={handleSubmit}>
               Sign In
             </Button>
-            {message && <div className="mt-3">{message}</div>}
+            {message && <div className="mt-3 text-danger">{message}</div>}
 
             <div className="divider">
               <span>or sign in with</span>
