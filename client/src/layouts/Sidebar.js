@@ -40,7 +40,7 @@ export default function Sidebar() {
                         <img src={userAvatar} alt="" />
                     </div>
                     <div className="sidebar-footer-body">
-                        <h6><Link to="../pages/profile.html">{user.username}</Link></h6>
+                        <h6><Link to="/">{user.username}</Link></h6>
                     
                     </div>
                     <Link onClick={toggleFooterMenu} to="" className="dropdown-link"><i className="ri-arrow-down-s-line"></i></Link>
