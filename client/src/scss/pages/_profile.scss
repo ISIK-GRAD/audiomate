@@ -1,5 +1,9 @@
 @import "../variables";
 
+body{
+    overflow-x: hidden;
+}
+
 :not([data-skin="dark"]){
     .profile-gallery-header{
         border-bottom: 1px solid rgba(226, 229, 236, 0.6);
@@ -42,6 +46,9 @@
         transition: ease-out 0.5s all;
     }
 
+    a > span{
+        color: $color-ui-01 !important;
+    }
 }
 
 .profile-gallery-animation-container{
@@ -112,5 +119,6 @@ h4{
         transition: ease-out 0.5s all;
     }
 }
+
 
 

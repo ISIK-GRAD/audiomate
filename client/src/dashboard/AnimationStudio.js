@@ -13,9 +13,10 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import "../scss/dashboard/_animationStudio.scss";
 
+import MatrixShape  from "../animations/MatrixShape";
+import GlitchCircle from "../animations/GlitchCircle";
+
 const animationConfig = require("../config/AnimationConfig.json");
-const GlitchCircle = require("../animations/GlitchCircle");
-const MatrixShape = require("../animations/MatrixShape");
 const networkService = require("../services/NetworkService");
 
 export default function UploadAudio() {
@@ -46,6 +47,7 @@ export default function UploadAudio() {
   const sourceRef = useRef();
   const recorderRef = useRef();
   const chunksRef = useRef([]);
+  const groupRef = useRef(null);
 
   useEffect(() => {
     if (canvasRef.current && analyser) {
@@ -105,11 +107,12 @@ export default function UploadAudio() {
           animateGlitchCircle();
           break;
         case "MatrixShape":
-          MatrixShape.prepare(scene, camera);
+          console.log(MatrixShape);
+          groupRef.current = MatrixShape.prepare(scene, camera);
           const animateMatrixShape = () => {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
-              MatrixShape.animate(dataArray, composer);
+              MatrixShape.animate(groupRef.current, dataArray, composer);
             }
             requestAnimationFrame(animateMatrixShape);
           };

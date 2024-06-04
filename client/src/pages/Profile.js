@@ -18,6 +18,7 @@ const {NETWORK_RESPONSE_TYPE} = require("../services/NetworkService");
 export default function Profile() {
   const { user } = useContext(UserContext);
   const [animations, setAnimations] = useState([]);
+  const [isAnimationsFetched, setIsAnimationsFetched] = useState(false);
   
 
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function Profile() {
   
     const fetchAnimations = async () => {
       if (!user || !isMounted) return;
+      if(! user.email) return;
   
       const response = await networkService.fetchAnimationsOfUser(user.email);
       console.log('Response received:', response);
@@ -33,6 +35,7 @@ export default function Profile() {
         if (response.responseType === NETWORK_RESPONSE_TYPE.NOT_FOUND) {
           console.log("404 404 404");
           setAnimations([]);
+          setIsAnimationsFetched(true);
         } else {
           console.error("[PROFILE] Error fetching animations: ", response.responseType);
         }
@@ -70,38 +73,39 @@ export default function Profile() {
 
               <Col xs="9" className="d-flex justify-content-start align-items-center">
                 <Row className="row-cols-sm-auto g-4 g-md-5 g-xl-4 g-xxl-5">
-                  {[
-                     {
-                      "icon": "ri-disc-line",
-                      "text": animations ? animations.length : 0,
-                      "label": "Animations"
-                    }, {
-                      "icon": "ri-team-line",
-                      "text": "356",
-                      "label": "Following"
-                    }, {
-                      "icon": "ri-team-line",
-                      "text": "1,056",
-                      "label": "Followers"
-                    }
-                  ].map((profileItem, index) => (
-                    <Col key={index}>
-                      <div className="profile-item">
-                        <i className={profileItem.icon}></i>
-                        <div className="profile-item-body">
-                          <p>{profileItem.text}</p>
-                          <span>{profileItem.label}</span>
-                        </div>
-                      </div>
-                    </Col>
-                  ))}
+                  {user.email ? (
+                    [
+                      {
+                       "icon": "ri-disc-line",
+                       "text": animations ? animations.length : 0,
+                       "label": "Animations"
+                     }, {
+                       "icon": "ri-team-line",
+                       "text": "356",
+                       "label": "Following"
+                     }, {
+                       "icon": "ri-team-line",
+                       "text": "1,056",
+                       "label": "Followers"
+                     }
+                   ].map((profileItem, index) => (
+                     <Col key={index}>
+                       <div className="profile-item">
+                         <i className={profileItem.icon}></i>
+                         <div className="profile-item-body">
+                           <p>{profileItem.text}</p>
+                           <span>{profileItem.label}</span>
+                         </div>
+                       </div>
+                     </Col>
+                   )))
+                   :
+                   null
+                  }
                 </Row>
               </Col>
               
             </Row>
-            
-
-            
 
             <Row>
               <h3 className="profile-gallery-header w-100 d-flex justify-content-start align-items-center text-align-start p-0 m-0 pb-1">
@@ -121,11 +125,34 @@ export default function Profile() {
                   ))
                 ) : (
                   <Col>
-                    <div>
-                      <p>You have not saved any animations yet</p>
-                      <Link to="/dashboard/studio">
-                        <span>Go to Animation Studio</span>
-                      </Link>
+                    <div className="w-100 h-100 mt-5 d-flex justify-content-center align-items-center flex-column">
+                      {! user.email ? (
+                        <p className="d-flex flex-column justify-content-center align-items-center">
+                          Please login to view your animations
+                          <Link to="/pages/signin" >
+                            <span className="mt-2">
+                              Login
+                            </span>
+                          </Link>
+                        </p>
+                        ) : 
+                        isAnimationsFetched 
+                        ? 
+                          <p className="d-flex flex-column justify-content-center align-items-center text-align-center">
+                            Wow, such empty
+                            <Link to="/dashboard/studio" >
+                              <span className="mt-2">
+                                Go to Animation Studio
+                              </span>
+                            </Link>
+                          </p>
+                        :
+                          <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        
+                      }
+                      
                     </div>
                   </Col>
                 )}
