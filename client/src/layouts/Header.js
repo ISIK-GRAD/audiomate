@@ -143,7 +143,7 @@ export default function Header() {
               <nav className="nav">
                 <Link to="/pages/signin" onClick={logout} ><i className="ri-logout-box-r-line"></i>
                   {user && user.email ? 
-                    "Sign out" : "Sign in"
+                    "Log out" : "Sign in"
                   }
                 </Link>
               </nav>

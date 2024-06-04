@@ -2,7 +2,7 @@ import React, { useContext, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import userAvatar from "../assets/img/img1.jpg";
-import { UserContext } from '../context/UserContext'; // Import UserContext
+import { UserContext } from '../context/UserContext'; 
 import {
     dashboardMenu,
     applicationsMenu,
@@ -11,8 +11,8 @@ import {
 } from "../data/Menu";
 
 export default function Sidebar() {
-    const { user, logout } = useContext(UserContext); // Get user from context
-    const scrollBarRef = useRef(null); // Use useRef hook
+    const { user, logout } = useContext(UserContext); 
+    const scrollBarRef = useRef(null); 
 
     const toggleFooterMenu = (e) => {
         e.preventDefault();
@@ -53,7 +53,7 @@ export default function Sidebar() {
                     <nav className="nav">
                     <Link to="/pages/signin" onClick={logout} ><i className="ri-logout-box-r-line"></i>
                         {user && user.email ? 
-                            "Sign out" : "Sign in"
+                            "Lo out" : "Sign in"
                         }
                     </Link>
                     </nav>
