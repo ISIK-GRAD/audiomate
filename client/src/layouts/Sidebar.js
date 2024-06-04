@@ -11,7 +11,7 @@ import {
 } from "../data/Menu";
 
 export default function Sidebar() {
-    const { user } = useContext(UserContext); // Get user from context
+    const { user, logout } = useContext(UserContext); // Get user from context
     const scrollBarRef = useRef(null); // Use useRef hook
 
     const toggleFooterMenu = (e) => {
@@ -47,15 +47,15 @@ export default function Sidebar() {
                 </div>
                 <div className="sidebar-footer-menu">
                     <nav className="nav">
-                        <Link to=""><i className="ri-edit-2-line"></i> Edit Profile</Link>
-                        <Link to=""><i className="ri-profile-line"></i> View Profile</Link>
+                        <Link to="/pages/profile"><i className="ri-edit-2-line"></i> Profile</Link>
                     </nav>
                     <hr />
                     <nav className="nav">
-                        <Link to=""><i className="ri-question-line"></i> Help Center</Link>
-                        <Link to=""><i className="ri-lock-line"></i> Privacy Settings</Link>
-                        <Link to=""><i className="ri-user-settings-line"></i> Account Settings</Link>
-                        <Link to=""><i className="ri-logout-box-r-line"></i> Log Out</Link>
+                    <Link to="/pages/signin" onClick={logout} ><i className="ri-logout-box-r-line"></i>
+                        {user && user.email ? 
+                            "Sign out" : "Sign in"
+                        }
+                    </Link>
                     </nav>
                 </div>
             </div>

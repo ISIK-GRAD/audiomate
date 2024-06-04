@@ -11,7 +11,7 @@ export default function Header() {
   const [theme, setTheme] = useState(localStorage.getItem('skin-mode') || 'light');
 
   useEffect(() => {
-    if (theme === 'dark') {
+    if (theme === 'dark') { 
       document.querySelector('html').setAttribute('data-skin', 'dark');
     } else {
       document.querySelector('html').removeAttribute('data-skin');
@@ -137,14 +137,10 @@ export default function Header() {
               <h5 className="mb-1 text-dark fw-semibold">{user?.username}</h5> {/* Display username */}
 
               <nav className="nav">
-                <Link to=""><i className="ri-edit-2-line"></i> Edit Profile</Link>
-                <Link to=""><i className="ri-profile-line"></i> View Profile</Link>
+                <Link to="/pages/profile"><i className="ri-profile-line"></i> Profile</Link>
               </nav>
               <hr />
               <nav className="nav">
-                <Link to=""><i className="ri-question-line"></i> Help Center</Link>
-                <Link to=""><i className="ri-lock-line"></i> Privacy Settings</Link>
-                <Link to=""><i className="ri-user-settings-line"></i> Account Settings</Link>
                 <Link to="/pages/signin" onClick={logout} ><i className="ri-logout-box-r-line"></i>
                   {user && user.email ? 
                     "Sign out" : "Sign in"
