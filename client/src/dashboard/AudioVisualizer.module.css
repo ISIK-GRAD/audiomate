@@ -255,6 +255,12 @@
   font-weight: 400;
   margin: 0px;
 }
+@media (max-width: 768px) {
+  .alternateOption {
+    bottom: 10px;
+    padding: 8px 10px;
+  }
+}
 
 @keyframes bounceOut {
   20% {

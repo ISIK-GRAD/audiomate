@@ -66,15 +66,24 @@ export default function BassBoom() {
     ctx.canvas.width = 600;
     ctx.canvas.height = 600;
   };
+  const handleCanvasClick = () => {
+    fileInputRef.current.click();
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && isValidMp3(file)) {
+      const url = URL.createObjectURL(file);
+      const newAudio = new Audio(url);
+      newAudio.play();
+      setAudio(newAudio);
+      processAudio(file);
       startPlayer(file);
     } else {
       alert("Please upload a valid MP3 file.");
     }
   };
+
 
   const initializeParticles = () => {
     window.particlesJS('particles-slow', PARTICLE_CONFIG);
@@ -256,10 +265,6 @@ export default function BassBoom() {
     startPlayer('default');
   };
 
-  const handleFileSelectButtonClick = () => {
-    fileInputRef.current.click();
-  };
-
   return (
     <React.Fragment>
       <Header />
@@ -293,25 +298,23 @@ export default function BassBoom() {
                       onClick={handleAlternateOptionClick}
                     >
                       <i className="fa fa-music"></i>
-                      <h1>Upload MP3 file</h1>
+                      <h1>Play Default Music</h1>
                     </button>
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      className={styles.fileInput}
-                      onChange={handleFileChange}
-                      style={{ display: 'none' }}
-                      accept="audio/mp3, audio/mpeg"
-                    />
                   </div>
                   <div className={`hidden ${styles.centerLogo}`} id="center-logo" ref={centerLogoRef}>
-                    <div id="audio-canvas-wrapper" className={styles.audioCanvasWrapper}>
+                    <div id="audio-canvas-wrapper" onClick={handleCanvasClick} className={styles.audioCanvasWrapper} style={{cursor:'pointer'}}>
                       <canvas id="audio-canvas" ref={canvasRef}></canvas>
+                      <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileChange}
+                  accept="audio/mp3, audio/mpeg"
+                  style={{ display: 'none' }}
+                />
                     </div>
                     <div id="text" className={styles.text}>
                       <h1>AudioMate</h1>
-                      
-                
                     </div>
                   </div>
                   <div className={`particles ${styles.particles}`} id="particles-slow"></div>
