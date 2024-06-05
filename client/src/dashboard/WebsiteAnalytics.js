@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import { Card, Col, Row } from "react-bootstrap";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import _ from 'lodash';
-import styles from './AudioVisualizer.module.css'; // Import CSS module
-import { Form } from "react-bootstrap";
+import styles from './AudioVisualizer.module.css'; 
 
 const COLORS = [
   'rgb(239,83,80)', 'rgb(211,47,47)', 'rgb(183,28,28)', 'rgb(255,112,67)',
@@ -36,7 +35,7 @@ export default function BassBoom() {
   const dropZoneRef = useRef(null);
   const centerLogoRef = useRef(null);
   const resetRef = useRef(null);
-  const fileInputRef = useRef(null); // Reference to the hidden file input
+  const fileInputRef = useRef(null); 
 
   useEffect(() => {
     initializeCanvas();
@@ -78,7 +77,6 @@ export default function BassBoom() {
       newAudio.play();
       setAudio(newAudio);
       processAudio(file);
-      startPlayer(file);
     } else {
       alert("Please upload a valid MP3 file.");
     }
@@ -260,10 +258,6 @@ export default function BassBoom() {
     }, 5000);
   };
 
-  const handleAlternateOptionClick = () => {
-    console.log("Button clicked");
-    startPlayer('default');
-  };
 
   return (
     <React.Fragment>
