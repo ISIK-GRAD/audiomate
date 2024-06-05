@@ -3,7 +3,7 @@ import dat from 'dat.gui';
 import Header from "../layouts/Header";
 import Footer from "../layouts/Footer";
 import { Row, Col } from 'react-bootstrap';
-
+import { Link } from "react-router-dom";
 export default function InteractiveAudio() {
     const canvasRef = useRef(null);
     const requestRef = useRef(null);
@@ -161,6 +161,10 @@ export default function InteractiveAudio() {
         <React.Fragment>
             <Header />
             <div className="main main-app p-3 p-lg-4">
+            <ol className="breadcrumb fs-sm mb-3">
+              <li className="breadcrumb-item">Menu</li>
+              <li className="breadcrumb-item active" aria-current="page"><Link to="#">Interactive Audio</Link></li>
+            </ol>
                 <Row className="g-3">
                     <Col xl="12">
                         <div style={{

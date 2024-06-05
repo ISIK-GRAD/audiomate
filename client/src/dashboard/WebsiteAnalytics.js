@@ -28,7 +28,7 @@ const PARTICLE_CONFIG = {
   interactivity: { events: { onhover: { enable: false } } }
 };
 
-export default function WebsiteAnalytics() {
+export default function BassBoom() {
   const [audio, setAudio] = useState(null);
   const [songEnded, setSongEnded] = useState(false);
   const [minMag, setMinMag] = useState(0);
@@ -264,9 +264,12 @@ export default function WebsiteAnalytics() {
     <React.Fragment>
       <Header />
       <div className="main main-app p-3 p-lg-4">
-        <div className="d-flex align-items-center justify-content-between mb-4">
+        <div className="d-flex align-items-center justify-content-between mb-3">
           <div>
-            <h4 className="main-title mb-0">Bass Boom</h4>
+          <ol className="breadcrumb fs-sm mb-1">
+              <li className="breadcrumb-item">Menu</li>
+              <li className="breadcrumb-item active" aria-current="page"><Link to="#">Bass Boom</Link></li>
+            </ol>
           </div>
         </div>
         <Row className="g-3 justify-content-center">

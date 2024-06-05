@@ -355,8 +355,11 @@ export default function UploadAudio() {
       <Header />
       <Sidebar />
       <div className="main main-app p-3 p-lg-4">
-        <div className="d-md-flex align-items-center justify-content-between mb-4">
-            <h4 className="main-title mb-0">Animation Studio</h4>
+        <div className="d-md-flex align-items-center justify-content-between mb-3">
+        <ol className="breadcrumb fs-sm mb-1">
+              <li className="breadcrumb-item">Menu</li>
+              <li className="breadcrumb-item active" aria-current="page"><Link to="#">Animation Studio</Link></li>
+            </ol>
         </div>
         <Row className="g-3">
           <Col xl="12">
