@@ -19,6 +19,10 @@ const dashboardMenu = [
     "label": "Interactive Audio",
     "link": "/dashboard/sales",
     "icon": "ri-pulse-fill"
+  },{
+    "label": "Bass Boom",
+    "link": "/dashboard/analytics",
+    "icon": "ri-vip-diamond-line"
   }
  /* {
     "label": "Website Analytics",

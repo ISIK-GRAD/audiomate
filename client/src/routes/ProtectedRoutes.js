@@ -155,6 +155,7 @@ const protectedRoutes = [
   { path: "docs/util/typography", element: <UtilTypography /> },
   { path: "docs/util/shadows", element: <UtilShadows /> },
   { path: "docs/util/extras", element: <UtilExtras /> }
+
 ]
 
 export default protectedRoutes;

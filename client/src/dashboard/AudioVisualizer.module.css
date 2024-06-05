@@ -1,0 +1,377 @@
+.wrapper {
+  background-color: rgba(0, 0, 0, 0.4);
+  height: 100%;
+  width: 100%;
+  background-image: url("/Users/selcuktunali/audiomate/client/src/dashboard/pexels-pixabay-355465.jpg");
+}
+
+
+.dropZoneWrapper {
+  background-color: rgba(30, 30, 30, 0.8);
+  backface-visibility: hidden;
+  height: 100%;
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  transition: all 0.4s, opacity 5s;
+  width: 100%;
+}
+.dropZoneWrapper.transitionIn {
+  opacity: 0;
+}
+.dropZoneWrapper.transitionOut {
+  opacity: 0;
+}
+.dropZoneWrapper.transitionOut .dropZone {
+  animation: bounceOut 1s ease-in-out;
+  border: 2px solid white;
+  background-color: transparent;
+  border-radius: 1000px;
+}
+.dropZoneWrapper.hidden {
+  display: none;
+  opacity: 0;
+}
+.dropZone {
+  background-color: #3d5afe;
+  border-radius: 1000px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  color: white;
+  height: 200px;
+  width: 200px;
+  transition: all 0.5s;
+  z-index: 5;
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+.dropZone:hover {
+  background-color: #03a9f4;
+}
+.dropZone.transitionOut {
+  animation: bounceOut 1s ease-in-out;
+}
+.dropZone.showing {
+  animation: bounceIn 1s ease-in-out;
+}
+.dropZone.transitionIn {
+  opacity: 0;
+}
+.dropZone.hidden {
+  display: none;
+  opacity: 0;
+}
+.dropZone h1 {
+  color: white;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0px;
+}
+.dropZone i {
+  color: white;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.label {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  pointer-events: none;
+  text-align: center;
+}
+.label i {
+  font-size: 5em;
+  transition: all 0.4s;
+}
+.label h1 {
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0px;
+  white-space: nowrap;
+}
+.alternateOption {
+  background-color: #3d5afe;
+  border-radius: 2px;
+  bottom: 20px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  cursor: pointer;
+  display: inline-block;
+  left: 50%;
+  padding: 10px 15px;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: all 0.5s;
+  z-index: 10;
+}
+.alternateOption:hover {
+  background-color: #03a9f4;
+}
+.alternateOption.transitionOut {
+  animation: bounceOutDown 1s ease-in-out;
+}
+.alternateOption.showing {
+  animation: bounceInUp 1s ease-in-out;
+}
+.alternateOption.transitionIn {
+  opacity: 0;
+}
+.alternateOption.hidden {
+  display: none;
+  opacity: 0;
+}
+.alternateOption h1 {
+  color: white;
+  display: inline-block;
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0px;
+}
+.alternateOption i {
+  color: white;
+  display: inline-block;
+  margin-right: 5px;
+}
+.centerLogo {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  animation: float 16s ease-in-out infinite;
+  border: 14px solid white;
+  border-radius: 1000px;
+  box-shadow: 0px 0px 18px 2px rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.1) 0px 10px 30px inset, rgba(0, 0, 0, 0.14) 0px 6px 10px inset;
+  font-family: cursive;
+  height: 300px;
+  transition: all 0.4s, opacity 1s;
+  width: 300px;
+  z-index: 10;
+}
+.centerLogo:after {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  border: 14px solid white;
+  border-radius: 1000px;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+}
+.centerLogo.transitionOut {
+  animation: bounceOut 1s ease-in-out;
+}
+.centerLogo.hidden {
+  display: none;
+}
+.centerLogo.showing {
+  animation: bounceIn 1s ease-in-out;
+}
+.centerLogo.rumbleLevel1 {
+  animation: rumbleLevel1 0.3s ease-in-out infinite;
+  box-shadow: 0px 0px 28px 6px rgba(255, 255, 255, 0.6);
+}
+.centerLogo.rumbleLevel1 .text h1 {
+  text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.6);
+}
+.centerLogo.rumbleLevel2 {
+  animation: rumbleLevel2 0.3s ease-in-out infinite;
+  box-shadow: 0px 0px 36px 10px rgba(255, 255, 255, 0.8);
+}
+.centerLogo.rumbleLevel2 .text h1 {
+  text-shadow: 0px 0px 16px rgba(255, 255, 255, 0.8);
+}
+.text {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  display: inline-block;
+  transform: translateX(-50%) translateY(-50%) rotate(-10deg);
+  transition: all 0.15s;
+}
+.text h1 {
+  color: white;
+  font-size: 4em;
+  height: 70px;
+  line-height: 70px;
+  margin: 0px;
+  text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.8);
+  transition: all 0.15s;
+}
+.particles {
+  height: 100%;
+  left: 0px;
+  opacity: 1;
+  position: absolute;
+  top: 0px;
+  transition: opacity 0.3s;
+  width: 100%;
+  z-index: 2;
+}
+.particles.initial {
+  transition: opacity 5s;
+}
+.particles.hidden {
+  opacity: 0;
+}
+.audioCanvasWrapper {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  height: 600px;
+  width: 600px;
+  z-index: 4;
+}
+.reset {
+  background-color: rgba(61, 90, 254, 0.25);
+  border: 2px solid #3d5afe;
+  border-radius: 2px;
+  bottom: 20px;
+  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+  cursor: pointer;
+  left: 20px;
+  opacity: 0;
+  padding: 10px 30px;
+  position: absolute;
+  transition: all 0.5s;
+  z-index: 0;
+}
+.reset:hover {
+  background-color: #3d5afe;
+}
+.reset.showing {
+  opacity: 1;
+  z-index: 10;
+}
+.reset h1 {
+  color: white;
+  font-size: 1em;
+  font-weight: 400;
+  margin: 0px;
+}
+
+@keyframes bounceOut {
+  20% {
+    transform: translateX(-50%) translateY(-50%) scale3d(0.9, 0.9, 0.9);
+  }
+  50%, 55% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) scale3d(1.1, 1.1, 1.1);
+  }
+  90%, to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) scale3d(0.3, 0.3, 0.3);
+  }
+}
+@keyframes bounceIn {
+  from, 20%, 40%, 60%, 80%, to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) scale3d(0.3, 0.3, 0.3);
+  }
+  20% {
+    transform: translateX(-50%) translateY(-50%) scale3d(1.1, 1.1, 1.1);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-50%) scale3d(0.9, 0.9, 0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) scale3d(1.03, 1.03, 1.03);
+  }
+  80% {
+    transform: translateX(-50%) translateY(-50%) scale3d(0.97, 0.97, 0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) scale3d(1, 1, 1);
+  }
+}
+@keyframes float {
+  0%, 100% {
+    transform: translateX(-50%) translateY(-50%);
+  }
+  20% {
+    transform: translateX(-52%) translateY(-53%);
+  }
+  40% {
+    transform: translateX(-43%) translateY(-45%);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-55%);
+  }
+  80% {
+    transform: translateX(-55%) translateY(-50%);
+  }
+}
+@keyframes bounceOutDown {
+  20% {
+    transform: translateX(-50%) translateY(-50%) translate3d(0, 10px, 0);
+  }
+  40%, 45% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translate3d(0, -20px, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translate3d(0, 2000px, 0);
+  }
+}
+@keyframes bounceInUp {
+  from, 60%, 75%, 90%, to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-50%) translate3d(0, 3000px, 0);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-50%) translate3d(0, -20px, 0);
+  }
+  75% {
+    transform: translateX(-50%) translateY(-50%) translate3d(0, 10px, 0);
+  }
+  90% {
+    transform: translateX(-50%) translateY(-50%) translate3d(0, -5px, 0);
+  }
+  to {
+    transform: translateX(-50%) translateY(-50%) translate3d(0, 0, 0);
+  }
+}
+@keyframes rumbleLevel1 {
+  0%, 100% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateX(-51%) translateY(-52%) rotate(-1deg) scale(1.1);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg) scale(1.05);
+  }
+  75% {
+    transform: translateX(-48%) translateY(-49%) rotate(1deg) scale(1.07);
+  }
+}
+@keyframes rumbleLevel2 {
+  0%, 100% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateX(-51%) translateY(-52%) rotate(-2deg) scale(1.2);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg) scale(1.1);
+  }
+  75% {
+    transform: translateX(-48%) translateY(-49%) rotate(2deg) scale(1.15);
+  }
+}

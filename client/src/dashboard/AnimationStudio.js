@@ -33,6 +33,7 @@ export default function UploadAudio() {
     radius: 10,
     glitch: false,
   });
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioDuration, setAudioDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
