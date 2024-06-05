@@ -292,14 +292,6 @@ export default function BassBoom() {
                         <h1>Upload MP3 File</h1>
                       </div>
                     </div>
-                    <button
-                      id="alternate-option"
-                      className={styles.alternateOption}
-                      onClick={handleAlternateOptionClick}
-                    >
-                      <i className="fa fa-music"></i>
-                      <h1>Play Default Music</h1>
-                    </button>
                   </div>
                   <div className={`hidden ${styles.centerLogo}`} id="center-logo" ref={centerLogoRef}>
                     <div id="audio-canvas-wrapper" onClick={handleCanvasClick} className={styles.audioCanvasWrapper} style={{cursor:'pointer'}}>

@@ -22,7 +22,7 @@ const dashboardMenu = [
   },{
     "label": "Bass Boom",
     "link": "/dashboard/analytics",
-    "icon": "ri-vip-diamond-line"
+    "icon": "ri-meteor-line"
   }
  /* {
     "label": "Website Analytics",
