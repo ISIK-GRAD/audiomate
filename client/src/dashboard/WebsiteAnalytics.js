@@ -74,9 +74,8 @@ export default function BassBoom() {
     if (file && isValidMp3(file)) {
       const url = URL.createObjectURL(file);
       const newAudio = new Audio(url);
-      newAudio.play();
       setAudio(newAudio);
-      processAudio(file);
+      startPlayer(file);
     } else {
       alert("Please upload a valid MP3 file.");
     }
