@@ -12,16 +12,16 @@ const dashboardMenu = [
   },
   {
     "label": "Animation Studio",
-    "link": "/dashboard/studio",
+    "link": "/dashboard/Studio",
     "icon": "ri-disc-line"
   },
   {
     "label": "Interactive Audio",
-    "link": "/dashboard/interactive",
+    "link": "/dashboard/Interactive",
     "icon": "ri-pulse-fill"
   },{
     "label": "Bass Boom",
-    "link": "/dashboard/bassBoom",
+    "link": "/dashboard/BassBoom",
     "icon": "ri-meteor-line"
   }
  /* {
