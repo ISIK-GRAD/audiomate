@@ -4,6 +4,7 @@ import Main from './layouts/Main';
 import NotFound from "./pages/NotFound";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
+import Faq from "./pages/Faq";
 import { UserProvider } from './context/UserContext'; // Import UserProvider
 
 import publicRoutes from "./routes/PublicRoutes";
@@ -31,17 +32,12 @@ export default function App() {
       <React.Fragment>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Main />}>
-              {protectedRoutes.map((route, index) => {
-                return (
-                  <Route
-                    path={route.path}
-                    element={route.element}
-                    key={index}
-                  />
-                );
-              })}
-            </Route>
+          <Route path="/" element={<Main />}>
+  <Route index element={<Faq />} />
+  {protectedRoutes.map((route, index) => (
+    <Route path={route.path} element={route.element} key={index} />
+  ))}
+</Route>
             {publicRoutes.map((route, index) => {
               return (
                 <Route

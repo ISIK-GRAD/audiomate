@@ -17,11 +17,11 @@ const dashboardMenu = [
   },
   {
     "label": "Interactive Audio",
-    "link": "/dashboard/sales",
+    "link": "/dashboard/interactive",
     "icon": "ri-pulse-fill"
   },{
     "label": "Bass Boom",
-    "link": "/dashboard/analytics",
+    "link": "/dashboard/bassBoom",
     "icon": "ri-meteor-line"
   }
  /* {

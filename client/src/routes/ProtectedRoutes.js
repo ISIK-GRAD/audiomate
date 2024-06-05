@@ -84,8 +84,8 @@ import IconFeather from "../docs/IconFeather";
 const protectedRoutes = [
   { path: "dashboard/finance", element: <FinanceMonitoring /> },
   { path: "dashboard/studio", element: <AnimationStudio /> },
-  { path: "dashboard/sales", element: <SalesMonitoring /> },
-  { path: "dashboard/analytics", element: <WebsiteAnalytics /> },
+  { path: "dashboard/interactive", element: <SalesMonitoring /> },
+  { path: "dashboard/bassBoom", element: <WebsiteAnalytics /> },
   { path: "dashboard/crypto", element: <Cryptocurrency /> },
   { path: "dashboard/helpdesk", element: <HelpdeskService /> },
   { path: "dashboard/storage", element: <StorageManagement /> },
