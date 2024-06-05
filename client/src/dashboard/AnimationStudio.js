@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Card, Col, Row, Form, ProgressBar } from "react-bootstrap";
+import { useLocation } from 'react-router-dom';
 import Header from "../layouts/Header";
 import Sidebar from "../layouts/Sidebar";
 import Footer from "../layouts/Footer";
@@ -48,6 +49,8 @@ export default function UploadAudio() {
   const recorderRef = useRef();
   const chunksRef = useRef([]);
   const groupRef = useRef(null);
+  const location = useLocation();
+
 
   useEffect(() => {
     if (canvasRef.current && analyser) {
@@ -125,12 +128,23 @@ export default function UploadAudio() {
       return () => {
         gui.destroy();
         renderer.dispose();
-        if(audioContext){
+        /* if(audioContext){
           audioContext.close();
-        }
+        } */
       };
     }
   }, [analyser, settings, selectedAnimation]);
+
+  useEffect(() => {
+    console.log("Component or location updated");
+
+    return () => {
+      console.log("Running cleanup due to location change or component unmounting");
+      if(!sourceRef.current) return;
+        sourceRef.current.stop();
+        setIsPlaying(false);
+    };
+  }, []);
 
   const handleSaveAnimation = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -455,15 +469,16 @@ export default function UploadAudio() {
                           <i class="ri-stop-mini-line"></i>
                         </Button>
                       </div>
+                      
                       <Draggable handle=".drag-handle">
                         <div ref={guiContainerRef} style={{
                             backgroundColor: "#000",
                             position: 'absolute',
-                            top: '0px',
+                            top: '20px',
                             right: '0px',
                             display: 'inline-block',
-                            zIndex: 9999
                           }}>
+
                           {audioFile ? 
                             <div className="drag-handle" style={{
                               height: '20px', 
@@ -472,8 +487,7 @@ export default function UploadAudio() {
                               }}>
                             </div>
                             : ""
-                        }
-                          
+                          }
                         </div>
                       </Draggable>                  
                       </div>

@@ -54,6 +54,7 @@ const postEndPoints = {
     '/upload-file': 
     {
         func: async(req, res) => {
+            console.log("API RECEIVED UPLOAD FILE REQUEST");
             const { email, props, animationName, animationType } = req.body;
             const file = req.file;
 
