@@ -115,6 +115,9 @@ export default function BassBoom() {
     }
     return 0;
   };
+  const handleAlternateOptionClick = () => {
+    startPlayer('default');
+  };
 
   const rumbleCenterLogo = (dataArray) => {
     const isBumpin = isBassABumpin(dataArray);
@@ -166,10 +169,9 @@ export default function BassBoom() {
   const processAudio = (mp3) => {
     let audio = null;
     if (mp3 === 'default') {
-      audio = new Audio(
-        'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1468070/Boost.mp3'
-      );
+      audio = new Audio("/defaultSong.mp3");
       audio.crossOrigin = 'anonymous';
+     
     } else {
       audio = createAudio(mp3);
     }
@@ -284,6 +286,14 @@ export default function BassBoom() {
                         <h1>Upload MP3 File</h1>
                       </div>
                     </div>
+                    <button
+                      id="alternate-option"
+                      className={styles.alternateOption}
+                      onClick={handleAlternateOptionClick}
+                    >
+                      <i className="fa fa-music"></i>
+                      <h1>Play Default Music</h1>
+                    </button>
                   </div>
                   <div className={`hidden ${styles.centerLogo}`} id="center-logo" ref={centerLogoRef}>
                     <div id="audio-canvas-wrapper" onClick={handleCanvasClick} className={styles.audioCanvasWrapper} style={{cursor:'pointer'}}>
