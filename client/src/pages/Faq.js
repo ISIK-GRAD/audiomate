@@ -8,7 +8,7 @@ export default function Faq() {
     <React.Fragment>
       <HeaderMobile />
       <div className="main main-app p-3 p-lg-4">
-        <h2 className="main-title mb-3 mt-2">Frequently Asked Questions</h2>
+        <h2 className="main-title mb-3 mt-2">F.A.Q</h2>
         <Row className="g-5">
           <Col xl>
             <p className="text-secondary mb-4">Explore how to use AudioMate for translating audio into visual animations and controlling external devices like Arduino or Raspberry Pi with LED outputs.</p>
@@ -55,7 +55,7 @@ export default function Faq() {
             style={{
               padding: '20px',
               borderRadius: '8px',
-              boxShadow: '0 2px 4px rgba(0, 150, 255, 1)',
+              boxShadow: '0 0px 12px rgba(0, 0, 255, 1)',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
@@ -64,7 +64,8 @@ export default function Faq() {
               maxHeight: '300px',
               border: '1px solid #007bff',
               borderRadius: '80px',
-              margin: 'auto' 
+              margin: 'auto',
+              marginRight:"20px"
             }}
           >
             <h5 className="section-title mb-4" style={{ fontSize: "1.5rem" }}>Contact Us</h5>

@@ -5,18 +5,18 @@ import NotFound from "./pages/NotFound";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Faq from "./pages/Faq";
-import { UserProvider } from './context/UserContext'; // Import UserProvider
+import { UserProvider } from './context/UserContext'; 
 
 import publicRoutes from "./routes/PublicRoutes";
 import protectedRoutes from "./routes/ProtectedRoutes";
 
-// import css
+
 import "./assets/css/remixicon.css";
 
-// import scss
+
 import "./scss/style.scss";
 
-// set skin on load
+
 window.addEventListener("load", function () {
   let skinMode = localStorage.getItem("skin-mode");
   let HTMLTag = document.querySelector("html");
@@ -28,7 +28,7 @@ window.addEventListener("load", function () {
 
 export default function App() {
   return (
-    <UserProvider> {/* Wrap the app with UserProvider */}
+    <UserProvider>
       <React.Fragment>
         <BrowserRouter>
           <Routes>

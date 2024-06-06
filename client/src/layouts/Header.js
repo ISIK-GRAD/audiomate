@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Dropdown from 'react-bootstrap/Dropdown';
 import userAvatar from "../assets/img/img1.jpg";
-import notification from "../data/Notification";
+
 import { UserContext } from '../context/UserContext'; // Import UserContext
 
 export default function Header() {
@@ -46,25 +46,8 @@ export default function Header() {
     }
   };
 
-  function NotificationList() {
-    const notiList = notification.map((item, key) => {
-      return (
-        <li className="list-group-item" key={key}>
-          <div className={(item.status === "online") ? "avatar online" : "avatar"}>{item.avatar}</div>
-          <div className="list-group-body">
-            <p>{item.text}</p>
-            <span>{item.date}</span>
-          </div>
-        </li>
-      );
-    });
+  
 
-    return (
-      <ul className="list-group">
-        {notiList}
-      </ul>
-    );
-  }
 
   const skinMode = (newTheme) => {
     const theme = newTheme.toLowerCase();
