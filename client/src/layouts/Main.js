@@ -5,7 +5,7 @@ import Header from "./Header";
 
 export default function Main() {
 
-  const offsets = ["/apps/file-manager", "/apps/email", "/apps/calendar"];
+  const offsets = ["/apps/file-manager"];
   const { pathname } = useLocation();
   const bc = document.body.classList;
 

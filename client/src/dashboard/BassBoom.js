@@ -202,7 +202,6 @@ export default function BassBoom() {
         let radius = 150;
         const cX = 300;
         const cY = 300;
-        const inc = Math.round(bufferLength / 10);
 
         for (let i = 0; i < bufferLength; i++) {
           let mag = dataArray[i] / 255;

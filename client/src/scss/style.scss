@@ -43,23 +43,11 @@
 @import "panels/main";
 
 // Dashboard
-@import "dashboard/sales";
-@import "dashboard/analytics";
-@import "dashboard/crypto";
-@import "dashboard/finance";
-@import "dashboard/helpdesk";
-@import "dashboard/events";
-@import "dashboard/storage";
-@import "dashboard/product";
+
 
 // Apps
 @import "apps/app";
 @import "apps/file-manager";
-@import "apps/email";
-@import "apps/chat";
-@import "apps/contact";
-@import "apps/calendar";
-@import "apps/tasks";
 @import "apps/music";
 @import "apps/video";
 
@@ -68,7 +56,6 @@
 @import "pages/auth";
 @import "pages/error";
 @import "pages/other";
-@import "pages/docs";
 @import "pages/landing";
 
 // Plugins
