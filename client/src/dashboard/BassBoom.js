@@ -29,12 +29,14 @@ const PARTICLE_CONFIG = {
 
 export default function BassBoom() {
   const [audio, setAudio] = useState(null);
+  const [showWrapper, setShowWrapper] = useState(true); 
   const [songEnded, setSongEnded] = useState(false);
   const [minMag, setMinMag] = useState(0);
   const canvasRef = useRef(null);
   const dropZoneRef = useRef(null);
   const centerLogoRef = useRef(null);
   const resetRef = useRef(null);
+  const [editableText, setEditableText] = useState("AudioMate");
   const fileInputRef = useRef(null); 
 
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function BassBoom() {
     ctx.canvas.width = 600;
     ctx.canvas.height = 600;
   };
+
   const handleCanvasClick = () => {
     fileInputRef.current.click();
   };
@@ -80,7 +83,6 @@ export default function BassBoom() {
       alert("Please upload a valid MP3 file.");
     }
   };
-
 
   const initializeParticles = () => {
     window.particlesJS('particles-slow', PARTICLE_CONFIG);
@@ -115,6 +117,7 @@ export default function BassBoom() {
     }
     return 0;
   };
+
   const handleAlternateOptionClick = () => {
     startPlayer('default');
   };
@@ -142,26 +145,20 @@ export default function BassBoom() {
   const hasSongEnded = (audio) => audio.currentTime >= audio.duration;
 
   const resetPlayer = () => {
-    if (audio) audio.currentTime = audio.duration;
-    setSongEnded(true);
-    resetRef.current.classList.remove(styles.showing);
-    setTimeout(() => {
-      cancelAnimationFrame(drawVisual);
-      centerLogoRef.current.classList.add(styles.transitionOut);
-
-      dropZoneRef.current.classList.add(styles.transitionIn);
-      dropZoneRef.current.classList.remove(styles.hidden);
-
-      setTimeout(() => {
-        centerLogoRef.current.classList.remove(styles.transitionOut);
-        centerLogoRef.current.classList.add(styles.hidden);
-        dropZoneRef.current.classList.remove(styles.transitionIn);
-      }, 1000);
-
-      setTimeout(() => {
-        dropZoneRef.current.classList.add(styles.showing);
-      }, 2000);
-    }, 1000);
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        setAudio(null);  
+    }
+    setSongEnded(false);
+    setShowWrapper(true); 
+    dropZoneRef.current.classList.remove(styles.transitionOut);
+    dropZoneRef.current.classList.add(styles.showing);  
+    centerLogoRef.current.classList.remove(styles.rumbleLevel1, styles.rumbleLevel2); 
+    document.getElementById('particles-fast').classList.add(styles.hidden);  
+    document.getElementById('particles-slow').classList.remove(styles.hidden); 
+    document.getElementById('reset').classList.remove(styles.showing);
+    console.log('UI reset to initial state');
   };
 
   let drawVisual = null;
@@ -171,7 +168,6 @@ export default function BassBoom() {
     if (mp3 === 'default') {
       audio = new Audio("/defaultSong.mp3");
       audio.crossOrigin = 'anonymous';
-     
     } else {
       audio = createAudio(mp3);
     }
@@ -265,59 +261,68 @@ export default function BassBoom() {
       <div className="main main-app p-3 p-lg-4">
         <div className="d-flex align-items-center justify-content-between mb-3">
           <div>
-          <ol className="breadcrumb fs-sm mb-1">
+            <ol className="breadcrumb fs-sm mb-1">
               <li className="breadcrumb-item">Menu</li>
               <li className="breadcrumb-item active" aria-current="page"><Link to="#">Bass Boom</Link></li>
             </ol>
           </div>
+          <input
+            type="text"
+            value={editableText}
+            onChange={(e) => setEditableText(e.target.value)}
+            className="form-control form-control-sm"
+            style={{ maxWidth: '200px', border: '2px solid #007bff', boxShadow: '0px 0px 8px rgba(0, 123, 255, 0.5)',margin: '0 0 0 auto'}} 
+          />
+          <i  style={{"margin-left": "1rem",color: 'rgba(40, 135, 255, 1)'}} className="tooltip-icon ri-question-mark" data-tooltip="
+                        Enter your text here default value is AudioMate">   
+                      </i>
         </div>
         <Row className="g-3 justify-content-center">
-          <Col md="12"  > 
+          <Col md="12"> 
             <Card className="card-one">
-                <div id="wrapper" className={styles.wrapper}>
-                  <div
-                    id="drop-zone-wrapper"
-                    className={styles.dropZoneWrapper}
-                    ref={dropZoneRef}
+              <div id="wrapper" className={`${styles.wrapper} ${showWrapper ? '' : styles.hidden}`}>
+                <div
+                  id="drop-zone-wrapper"
+                  className={styles.dropZoneWrapper}
+                  ref={dropZoneRef}
+                >
+                  <div id="drop-zone" className={styles.dropZone}>
+                    <div id="label" className={styles.label}>
+                      <i className="fa fa-cloud-upload"></i>
+                      <h1>Upload MP3 File</h1>
+                    </div>
+                  </div>
+                  <button
+                    id="alternate-option"
+                    className={styles.alternateOption}
+                    onClick={handleAlternateOptionClick}
                   >
-                    <div id="drop-zone" className={styles.dropZone}>
-                      <div id="label" className={styles.label}>
-                        <i className="fa fa-cloud-upload"></i>
-                        <h1>Upload MP3 File</h1>
-                      </div>
-                    </div>
-                    <button
-                      id="alternate-option"
-                      className={styles.alternateOption}
-                      onClick={handleAlternateOptionClick}
-                    >
-                      <i className="fa fa-music"></i>
-                      <h1>Play Default Music</h1>
-                    </button>
+                    <i className="fa fa-music"></i>
+                    <h1>Play Default Music</h1>
+                  </button>
+                </div>
+                <div className={`hidden ${styles.centerLogo}`} id="center-logo" ref={centerLogoRef}>
+                  <div id="audio-canvas-wrapper" onClick={handleCanvasClick} className={styles.audioCanvasWrapper} style={{cursor:'pointer'}}>
+                    <canvas id="audio-canvas" ref={canvasRef}></canvas>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="audio/mp3, audio/mpeg"
+                      style={{ display: 'none' }}
+                    />
                   </div>
-                  <div className={`hidden ${styles.centerLogo}`} id="center-logo" ref={centerLogoRef}>
-                    <div id="audio-canvas-wrapper" onClick={handleCanvasClick} className={styles.audioCanvasWrapper} style={{cursor:'pointer'}}>
-                      <canvas id="audio-canvas" ref={canvasRef}></canvas>
-                      <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="hidden"
-                  onChange={handleFileChange}
-                  accept="audio/mp3, audio/mpeg"
-                  style={{ display: 'none' }}
-                />
-                    </div>
-                    <div id="text" className={styles.text}>
-                      <h1>AudioMate</h1>
-                    </div>
-                  </div>
-                  <div className={`particles ${styles.particles}`} id="particles-slow"></div>
-                  <div className={`particles initial hidden ${styles.particlesFast}`} id="particles-fast"></div>
-                  <div id="reset" className={styles.reset} ref={resetRef}>
-                    <h1>Reset</h1>
+                  <div id="text" className={styles.text}>
+                    <h1>{editableText}</h1>
                   </div>
                 </div>
-            
+                <div className={`particles ${styles.particles}`} id="particles-slow"></div>
+                <div className={`particles initial hidden ${styles.particlesFast}`} id="particles-fast"></div>
+                <div id="reset" className={styles.reset} ref={resetRef} onClick={resetPlayer}>
+                  <h1>Reset</h1>
+                </div>
+              </div>
             </Card>
           </Col>
         </Row>
