@@ -11,7 +11,7 @@ const MatrixShape = {
         scene.add(camera);
 
         const planeGeometry = new THREE.PlaneGeometry(800, 800, 20, 20);
-        const planeMaterial = new THREE.MeshLambertMaterial({
+        const planeMaterial = new THREE.MeshBasicMaterial({
             color: 0x6904ce,
             side: THREE.DoubleSide,
             wireframe: true
@@ -28,13 +28,13 @@ const MatrixShape = {
         group.add(plane2);
 
         const bigBallGeometry = new THREE.IcosahedronGeometry(10, 4);
-        const bigBallMaterial = new THREE.MeshLambertMaterial({
+        const bigBallMaterial = new THREE.MeshBasicMaterial({
             color: 0xff00ee,
             wireframe: true
         });
 
         const smallBallGeometry = new THREE.IcosahedronGeometry(4, 3);
-        const smallBallMaterial = new THREE.MeshLambertMaterial({
+        const smallBallMaterial = new THREE.MeshBasicMaterial({
             color: 0x34ebd2,
             wireframe: true
         });
@@ -56,10 +56,10 @@ const MatrixShape = {
 
         scene.add(group);
 
-        return group;
+        return { group, spotLight };
     },
 
-    animate: function (group, dataArray, composer, matrixSettings) {
+    animate: function ({ group, spotLight }, dataArray, composer, matrixSettings) {
         const makeRoughBall = (mesh, bassFr, treFr) => {
             const positions = mesh.geometry.attributes.position.array;
             const vertex = new THREE.Vector3();
@@ -128,15 +128,15 @@ const MatrixShape = {
 
         group.rotation.y += 0.005;
 
-        group.children[0].material.color.set(matrixSettings.planeColor);
-        group.children[1].material.color.set(matrixSettings.planeColor);
-        group.children[2].material.color.set(matrixSettings.bigBallColor);
-        group.children[3].material.color.set(matrixSettings.smallBallColor);
-        group.children[0].material.wireframeLinewidth = matrixSettings.wireframeThickness;
-        group.children[1].material.wireframeLinewidth = matrixSettings.wireframeThickness;
-        group.children[2].material.wireframeLinewidth = matrixSettings.wireframeThickness;
-        group.children[3].material.wireframeLinewidth = matrixSettings.wireframeThickness;
-        
+        group.children.forEach((child, index) => {
+            if (index < 4) {
+                child.material.color.set(matrixSettings[index < 2 ? 'planeColor' : index === 2 ? 'bigBallColor' : 'smallBallColor']);
+                child.material.wireframeLinewidth = matrixSettings.wireframeThickness;
+            }
+        });
+
+        spotLight.intensity = matrixSettings.lightIntensity;
+
         composer.render();
     },
 

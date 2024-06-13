@@ -86,7 +86,7 @@ export default function UploadAudio() {
         case "GlitchCircle":
           const glitchPass = new GlitchPass();
           composer.addPass(glitchPass);
-          const particleSystem = GlitchCircle.prepare({settings, gui, glitchPass,setSettingsCallback: setSettings});
+          const particleSystem = GlitchCircle.prepare({settings, gui, glitchPass, setSettingsCallback: setSettings});
           scene.add(particleSystem);
           camera.position.z = 30;
           const animateGlitchCircle = () => {
@@ -105,8 +105,9 @@ export default function UploadAudio() {
           animateGlitchCircle();
           break;
         case "MatrixShape":
-          const matrixSystem = groupRef.current = MatrixShape.prepare(scene, camera);
-          scene.add(matrixSystem);
+          const { group, spotLight } = MatrixShape.prepare(scene, camera);
+          groupRef.current = group;
+          scene.add(group);
 
           const matrixFolder = gui.addFolder('MatrixShape Settings');
           matrixFolder.addColor(matrixSettings, 'planeColor').onChange(value => updateMatrixSettings('planeColor', value));
@@ -119,7 +120,7 @@ export default function UploadAudio() {
           const animateMatrixShape = () => {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
-              MatrixShape.animate(groupRef.current, dataArray, composer, matrixSettings);
+              MatrixShape.animate({ group: groupRef.current, spotLight }, dataArray, composer, matrixSettings);
             }
             requestAnimationFrame(animateMatrixShape);
           };
