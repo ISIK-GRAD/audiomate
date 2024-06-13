@@ -10,6 +10,12 @@
     },
     "MatrixShape": {
         "name": "MatrixShape"
-  }
+  },
+    "SineWave": {
+        "name": "SineWave",
+        "waveLength": 10,
+        "waveHeight": 10,
+        "waveSpeed": 0.1
+    }
  
 }
