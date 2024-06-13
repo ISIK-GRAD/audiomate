@@ -74,16 +74,6 @@ export default function UploadAudio() {
       composer.addPass(new RenderPass(scene, camera));
 
       const gui = new GUI({ autoPlace: false });
-      const particlesFolder = gui.addFolder('Particle Settings');
-      particlesFolder.add(settings, 'particleColor', '#ffffff', '#000000').name('Color').onChange(updateVisualization);
-      particlesFolder.add(settings, 'particleSize', 0.1, 5.0).name('Size').onChange(updateVisualization);
-      particlesFolder.add(settings, 'particleCount', 100, 1000).step(1).name('Count').onChange(updateVisualization);
-      particlesFolder.add(settings, 'radius', 1, 20).name('Radius').onChange(updateVisualization);
-      particlesFolder.open();
-
-      const effectsFolder = gui.addFolder('Effects');
-      effectsFolder.add(settings, 'glitch').name('Glitch Effect').onChange(toggleGlitchEffect);
-      effectsFolder.open();
 
       guiContainerRef.current.removeChild(guiContainerRef.current.firstChild)
       guiContainerRef.current.appendChild(gui.domElement);
@@ -92,7 +82,7 @@ export default function UploadAudio() {
         case "GlitchCircle":
           const glitchPass = new GlitchPass();
           composer.addPass(glitchPass);
-          const particleSystem = GlitchCircle.prepare({settings, gui, glitchPass, setSettings});
+          const particleSystem = GlitchCircle.prepare({settings, gui, glitchPass,setSettingsCallback: setSettings});
           scene.add(particleSystem);
           camera.position.z = 30;
           const animateGlitchCircle = () => {
@@ -111,8 +101,8 @@ export default function UploadAudio() {
           animateGlitchCircle();
           break;
         case "MatrixShape":
-          console.log(MatrixShape);
-          groupRef.current = MatrixShape.prepare(scene, camera);
+          const matrixSystem = groupRef.current = MatrixShape.prepare(scene, camera);
+          scene.add(matrixSystem);
           const animateMatrixShape = () => {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
@@ -129,9 +119,6 @@ export default function UploadAudio() {
       return () => {
         gui.destroy();
         renderer.dispose();
-        /* if(audioContext){
-          audioContext.close();
-        } */
       };
     }
   }, [analyser, settings, selectedAnimation]);

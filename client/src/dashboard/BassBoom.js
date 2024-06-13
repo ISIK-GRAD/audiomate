@@ -20,11 +20,11 @@ const PARTICLE_CONFIG = {
   particles: {
     number: { value: 100 },
     size: { value: 3, random: true },
-    opacity: { value: 0.8, random: true },
+    opacity: { value: 1, random: true },
     move: { direction: 'right', speed: 20 },
     line_linked: { enable: false }
   },
-  interactivity: { events: { onhover: { enable: false } } }
+  interactivity: { events: { onhover: { enable: false} } }
 };
 
 export default function BassBoom() {
@@ -266,16 +266,19 @@ export default function BassBoom() {
               <li className="breadcrumb-item active" aria-current="page"><Link to="#">Bass Boom</Link></li>
             </ol>
           </div>
+          <div style={{ display: 'flex', alignItems: 'center'}}>
           <input
             type="text"
             value={editableText}
             onChange={(e) => setEditableText(e.target.value)}
             className="form-control form-control-sm"
-            style={{ maxWidth: '200px', border: '2px solid #007bff', boxShadow: '0px 0px 8px rgba(0, 123, 255, 0.5)',margin: '0 0 0 auto'}} 
+            style={{ maxWidth: '200px', border: '2px solid #007bff', boxShadow: '0px 0px 8px rgba(0, 123, 255, 0.5)'}} 
           />
-          <i  style={{"margin-left": "1rem",color: 'rgba(40, 135, 255, 1)'}} className="tooltip-icon ri-question-mark" data-tooltip="
-                        Enter your text here default value is AudioMate">   
+          <i  style={{color: 'rgba(40, 135, 255, 1)',margin:'10px'}} className="tooltip-icon ri-question-mark" data-tooltip="
+                        Enter your text here default value is AudioMate"
+                        >   
                       </i>
+                      </div>
         </div>
         <Row className="g-3 justify-content-center">
           <Col md="12"> 

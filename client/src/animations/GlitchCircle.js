@@ -3,7 +3,7 @@ const GUI = require('dat.gui');
 
 
 const GlitchCircle = {
-    prepare: function ({settings, gui=null, glitchPass, setSettingsCallback=null}) {
+    prepare: function ({settings, gui, glitchPass, setSettingsCallback}) {
         // Create particles
         const particleCount = settings.particleCount;
         const particles = new THREE.BufferGeometry();
