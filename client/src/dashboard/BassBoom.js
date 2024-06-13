@@ -3,7 +3,6 @@ import Header from "../layouts/Header";
 import Footer from "../layouts/Footer";
 import { Link } from "react-router-dom";
 import { Card, Col, Row } from "react-bootstrap";
-import '@fortawesome/fontawesome-free/css/all.min.css';
 import _ from 'lodash';
 import styles from './AudioVisualizer.module.css'; 
 
@@ -60,6 +59,17 @@ export default function BassBoom() {
     setInterval(() => {
       setMinMag(getRand(3, 5));
     }, 1000);
+
+    return(
+      () => {
+        //close audio context
+        if(audio) {
+          audio.pause();
+          audio.currentTime = 0;
+          setAudio(null);
+        }
+      }
+    )
   }, []);
 
   const initializeCanvas = () => {
@@ -172,6 +182,7 @@ export default function BassBoom() {
       audio = createAudio(mp3);
     }
     setAudio(audio);
+    
     audio.addEventListener('loadedmetadata', () => {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const audioSrc = audioCtx.createMediaElementSource(audio);

@@ -16,6 +16,7 @@ import "../scss/dashboard/_animationStudio.scss";
 
 import MatrixShape from "../animations/MatrixShape";
 import GlitchCircle from "../animations/GlitchCircle";
+import SineWave from "../animations/SineWave";
 
 const animationConfig = require("../config/AnimationConfig.json");
 const networkService = require("../services/NetworkService");
@@ -126,6 +127,23 @@ export default function UploadAudio() {
           };
           animateMatrixShape();
           break;
+
+        case "SineWave":
+          const waveGroup = SineWave.prepare(scene);
+          camera.position.set(0,0,50);
+
+          const animateSineWave = () => {
+            if (analyserRef.current) {
+              analyserRef.current.getByteFrequencyData(dataArray);
+              SineWave.animate(dataArray, waveGroup, camera);
+              composer.render();
+            }
+            requestAnimationFrame(animateSineWave);
+          };
+          animateSineWave();
+          
+          break;
+
         default:
           console.error(`Unknown animation: ${selectedAnimation}`);
       }
@@ -354,6 +372,30 @@ export default function UploadAudio() {
     // Placeholder: Implement glitch effect toggle logic here
   };
 
+  const handleDownloadINO = async () => {
+    try {
+      const response = await fetch('../ino/LCD_SineWave.ino');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const inoContent = await response.text();
+
+      const blob = new Blob([inoContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'LCD_SineWave.ino';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to fetch .ino file:', error);
+    }
+  };
+
+
   return (
     <React.Fragment>
       <Header />
@@ -402,16 +444,38 @@ export default function UploadAudio() {
                       <span className="badge bg-ui-02 fs-xs" style={{ color: 'black' }}>
                         Animation Type
                       </span>
-                      <Form.Group className="w-100">
-                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange} style={{ color: 'rgba(40, 135, 255, 1)' }} >
+                      <Form.Group className="w-100 position-relative">
+                        <Form.Control
+                          className="w-100"
+                          as="select"
+                          value={selectedAnimation}
+                          onChange={handleAnimationChange}
+                          style={{ color: 'rgba(40, 135, 255, 1)' }}
+                        >
                           {Object.keys(animationConfig)
                             .filter(key => key !== "defaultAnimationName")
                             .map((key) => (
-                              <option key={key} value={animationConfig[key].name}>
+                              <option 
+                                key={key} 
+                                value={animationConfig[key].name}
+                                className="custom-dropdown-option">
                                 {animationConfig[key].name}
                               </option>
                             ))}
                         </Form.Control>
+                        {selectedAnimation === "SineWave" && (
+                          <img
+                            src="/images/arduino-logo.png"
+                            alt="Arduino Logo"
+                            style={{
+                              position: 'absolute',
+                              right: '10px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              height: '20px'
+                            }}
+                          />
+                        )}
                       </Form.Group>
                     </div>
                   </Col>
@@ -433,19 +497,33 @@ export default function UploadAudio() {
                 <hr />
                 <Row className="g-4 mt-3">
                   <div className="w-100 d-flex justify-content-end align-items-center flex-row">
-                    <Form.Group className="w-25 mb-3 me-3">
-                      <Form.Control
-                        type="text"
-                        value={animationName}
-                        onChange={e => setAnimationName(e.target.value)}
-                        placeholder="Enter animation name"
-                      />
-                    </Form.Group>
-                    <Button onClick={handleSaveAnimation} className="mb-3 w-15">
+
+                  {selectedAnimation === "SineWave" && (
+                    <Button onClick={handleDownloadINO} className="mb-3 w-15">
                       <span>
-                        Save To Library
+                        Download INO
                       </span>
                     </Button>
+                  )}
+
+                  {selectedAnimation !== "SineWave" && (
+                    <div className="w-50 mb-3 me-3 d-flex justify-content-end align-items-center">
+                      <Form.Group className= "w-40 me-3">
+                          <Form.Control
+                          type="text"
+                          value={animationName}
+                          onChange={e => setAnimationName(e.target.value)}
+                          placeholder="Enter animation name"
+                          />
+                      </Form.Group>
+                      <Button onClick={handleSaveAnimation} className="w-40 ">
+                        <span>
+                          Save To Library
+                        </span>
+                      </Button>
+                    </div>
+                  )}
+                    
                   </div>
                 </Row>
                 <Row className="g-4">
