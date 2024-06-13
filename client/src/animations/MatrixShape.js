@@ -59,7 +59,7 @@ const MatrixShape = {
         return group;
     },
 
-    animate: function (group, dataArray, composer) {
+    animate: function (group, dataArray, composer, matrixSettings) {
         const makeRoughBall = (mesh, bassFr, treFr) => {
             const positions = mesh.geometry.attributes.position.array;
             const vertex = new THREE.Vector3();
@@ -127,6 +127,16 @@ const MatrixShape = {
         makeRoughBall(group.children[3], modulate(Math.pow(lowerAvg, 0.4), 0, 1, 0, 4), modulate(upperAvgFr, 0, 1, 0, 8));
 
         group.rotation.y += 0.005;
+
+        group.children[0].material.color.set(matrixSettings.planeColor);
+        group.children[1].material.color.set(matrixSettings.planeColor);
+        group.children[2].material.color.set(matrixSettings.bigBallColor);
+        group.children[3].material.color.set(matrixSettings.smallBallColor);
+        group.children[0].material.wireframeLinewidth = matrixSettings.wireframeThickness;
+        group.children[1].material.wireframeLinewidth = matrixSettings.wireframeThickness;
+        group.children[2].material.wireframeLinewidth = matrixSettings.wireframeThickness;
+        group.children[3].material.wireframeLinewidth = matrixSettings.wireframeThickness;
+        
         composer.render();
     },
 

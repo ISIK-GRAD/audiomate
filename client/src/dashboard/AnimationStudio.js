@@ -14,7 +14,7 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import "../scss/dashboard/_animationStudio.scss";
 
-import MatrixShape  from "../animations/MatrixShape";
+import MatrixShape from "../animations/MatrixShape";
 import GlitchCircle from "../animations/GlitchCircle";
 
 const animationConfig = require("../config/AnimationConfig.json");
@@ -34,14 +34,19 @@ export default function UploadAudio() {
     radius: 10,
     glitch: false,
   });
-  
+  const [matrixSettings, setMatrixSettings] = useState({
+    planeColor: '#6904ce',
+    bigBallColor: '#ff00ee',
+    smallBallColor: '#34ebd2',
+    lightIntensity: 0.9,
+    wireframeThickness: 1
+  });
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioDuration, setAudioDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig.defaultAnimationName].name);
   const [animationName, setAnimationName] = useState("");
-
 
   const canvasRef = useRef();
   const guiContainerRef = useRef();
@@ -51,7 +56,6 @@ export default function UploadAudio() {
   const chunksRef = useRef([]);
   const groupRef = useRef(null);
   const location = useLocation();
-
 
   useEffect(() => {
     if (canvasRef.current && analyser) {
@@ -89,10 +93,10 @@ export default function UploadAudio() {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
               GlitchCircle.animate({
-                audioData: dataArray, 
-                controls: controls, 
-                composer: composer, 
-                particleSystem: particleSystem, 
+                audioData: dataArray,
+                controls: controls,
+                composer: composer,
+                particleSystem: particleSystem,
                 settings: settings
               });
             }
@@ -103,10 +107,19 @@ export default function UploadAudio() {
         case "MatrixShape":
           const matrixSystem = groupRef.current = MatrixShape.prepare(scene, camera);
           scene.add(matrixSystem);
+
+          const matrixFolder = gui.addFolder('MatrixShape Settings');
+          matrixFolder.addColor(matrixSettings, 'planeColor').onChange(value => updateMatrixSettings('planeColor', value));
+          matrixFolder.addColor(matrixSettings, 'bigBallColor').onChange(value => updateMatrixSettings('bigBallColor', value));
+          matrixFolder.addColor(matrixSettings, 'smallBallColor').onChange(value => updateMatrixSettings('smallBallColor', value));
+          matrixFolder.add(matrixSettings, 'lightIntensity', 0, 2).onChange(value => updateMatrixSettings('lightIntensity', value));
+          matrixFolder.add(matrixSettings, 'wireframeThickness', 0, 3).onChange(value => updateMatrixSettings('wireframeThickness', value));
+          matrixFolder.open();
+
           const animateMatrixShape = () => {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
-              MatrixShape.animate(groupRef.current, dataArray, composer);
+              MatrixShape.animate(groupRef.current, dataArray, composer, matrixSettings);
             }
             requestAnimationFrame(animateMatrixShape);
           };
@@ -128,36 +141,42 @@ export default function UploadAudio() {
 
     return () => {
       console.log("Running cleanup due to location change or component unmounting");
-      if(!sourceRef.current) return;
-        sourceRef.current.stop();
-        setIsPlaying(false);
+      if (!sourceRef.current) return;
+      sourceRef.current.stop();
+      setIsPlaying(false);
     };
   }, []);
 
+  const updateMatrixSettings = (key, value) => {
+    setMatrixSettings(prevState => ({
+      ...prevState,
+      [key]: value
+    }));
+  };
+
   const handleSaveAnimation = async () => {
     const user = JSON.parse(localStorage.getItem('user'));
-    
-    if(! user ) {
+
+    if (!user) {
       alert("You have to sign-in first!");
       return;
     }
-    if(! user.email || !audioFile) {
+    if (!user.email || !audioFile) {
       console.log("user:", user);
       console.log("audio file", audioFile);
       alert("Upload an audio file first!");
       return;
     }
-    if(! animationName){
+    if (!animationName) {
       alert("Enter an animation name!");
       return;
     }
 
     const response = await networkService.uploadFile(user.email, audioFile, settings, animationName, selectedAnimation);
-    
-    if(!response.isError()){
+
+    if (!response.isError()) {
       alert("Animation saved successfully");
-    }
-    else{
+    } else {
       alert("Error saving animation");
       console.log("Error saving animation");
     }
@@ -239,8 +258,7 @@ export default function UploadAudio() {
       if (isPlaying) {
         sourceRef.current.stop();
         setIsPlaying(false);
-      } 
-      else {
+      } else {
         const newSource = audioContext.createBufferSource();
         newSource.buffer = sourceRef.current.buffer;
         newSource.connect(analyserRef.current);
@@ -304,7 +322,7 @@ export default function UploadAudio() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `visualizer.${options.mimeType.split('/')[1]}`; 
+      a.download = `visualizer.${options.mimeType.split('/')[1]}`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -313,9 +331,7 @@ export default function UploadAudio() {
     recorder.start();
     recorderRef.current = recorder;
     setIsRecording(true);
-};
-
-
+  };
 
   const handleStopRecording = () => {
     if (recorderRef.current && recorderRef.current.state === 'recording') {
@@ -343,10 +359,10 @@ export default function UploadAudio() {
       <Sidebar />
       <div className="main main-app p-3 p-lg-4">
         <div className="d-md-flex align-items-center justify-content-between mb-3">
-        <ol className="breadcrumb fs-sm mb-1">
-              <li className="breadcrumb-item">Menu</li>
-              <li className="breadcrumb-item active" aria-current="page"><Link to="#">Animation Studio</Link></li>
-            </ol>
+          <ol className="breadcrumb fs-sm mb-1">
+            <li className="breadcrumb-item">Menu</li>
+            <li className="breadcrumb-item active" aria-current="page"><Link to="#">Animation Studio</Link></li>
+          </ol>
         </div>
         <Row className="g-3">
           <Col xl="12">
@@ -366,8 +382,7 @@ export default function UploadAudio() {
                           type="file"
                           accept="audio/*"
                           onChange={handleFileChange}
-                          
-                          style={{color: 'rgba(40, 135, 255, 1)'}}
+                          style={{ color: 'rgba(40, 135, 255, 1)' }}
                         />
                       </div>
                     </Form.Group>
@@ -383,11 +398,11 @@ export default function UploadAudio() {
                   </Col>
                   <Col xl="3" className="mt-xl-9 d-flex justify-content-center align-items-center">
                     <div className="w-100 d-flex justify-content-center align-items-start flex-column">
-                      <span className="badge bg-ui-02 fs-xs"  style={{ color: 'black'}}> 
+                      <span className="badge bg-ui-02 fs-xs" style={{ color: 'black' }}>
                         Animation Type
                       </span>
                       <Form.Group className="w-100">
-                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange} style={{ color: 'rgba(40, 135, 255, 1)'}} >
+                        <Form.Control className="w-100" as="select" value={selectedAnimation} onChange={handleAnimationChange} style={{ color: 'rgba(40, 135, 255, 1)' }} >
                           {Object.keys(animationConfig)
                             .filter(key => key !== "defaultAnimationName")
                             .map((key) => (
@@ -401,27 +416,27 @@ export default function UploadAudio() {
                   </Col>
                   <Col xl="3" className="d-flex flex-row-reverse">
                     <h4 className="mb-0 w-100 d-flex justify-content-center align-items-center">
-                        <span className="text-dark fw-semibold mb-1">
-                          Instructions
-                        </span>
-                        
-                        <i  style={{"margin-left": "1rem",color: 'rgba(40, 135, 255, 1)'}} className="tooltip-icon ri-question-mark" data-tooltip="
+                      <span className="text-dark fw-semibold mb-1">
+                        Instructions
+                      </span>
+
+                      <i style={{ "margin-left": "1rem", color: 'rgba(40, 135, 255, 1)' }} className="tooltip-icon ri-question-mark" data-tooltip="
                         • Select or drag an audio file to the file input field to upload&#10;•
                         Use the controls to customize the animation&#10;•
-                        Download a video recording of the animation or save it in your account">   
+                        Download a video recording of the animation or save it in your account">
                       </i>
                     </h4>
-                   
-                </Col>
+
+                  </Col>
                 </Row>
                 <hr />
                 <Row className="g-4 mt-3">
                   <div className="w-100 d-flex justify-content-end align-items-center flex-row">
                     <Form.Group className="w-25 mb-3 me-3">
-                      <Form.Control 
-                        type="text" 
-                        value={animationName} 
-                        onChange={e => setAnimationName(e.target.value)} 
+                      <Form.Control
+                        type="text"
+                        value={animationName}
+                        onChange={e => setAnimationName(e.target.value)}
                         placeholder="Enter animation name"
                       />
                     </Form.Group>
@@ -430,18 +445,18 @@ export default function UploadAudio() {
                         Save To Library
                       </span>
                     </Button>
-                    </div>
+                  </div>
                 </Row>
                 <Row className="g-4">
                   <Col xl="12">
                     <div className="video-player-container" style={{ position: 'relative', width: '100%', margin: '0 auto' }}>
-                      
+
                       <canvas ref={canvasRef} width="800" height="600" style={{ width: '100%', height: '600px', backgroundColor: '#000' }} />
                       <div className="video-controls" style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', background: 'rgba(0, 0, 0, 0.5)', padding: '10px', borderRadius: '5px' }}>
                         <Button onClick={handlePlayPause} className="audio-button me-2">
                           {isPlaying ?
-                             <i class="ri-pause-circle-line" style={{"font-size": "1.5em"}}></i> :
-                             <i class="ri-play-line" style={{"font-size": "1.5em"}}></i> 
+                            <i className="ri-pause-circle-line" style={{ "font-size": "1.5em" }}></i> :
+                            <i className="ri-play-line" style={{ "font-size": "1.5em" }}></i>
                           }
                         </Button>
                         <input
@@ -453,42 +468,42 @@ export default function UploadAudio() {
                           className="mx-3"
                           style={{ width: '200px' }}
                         />
-                        <Button onClick={handleStartRecording} className="audio-button ms-2" style={{"font-size": "1.5em"}} disabled={isRecording}>
-                          <i class="ri-record-circle-line"></i>
+                        <Button onClick={handleStartRecording} className="audio-button ms-2" style={{ "font-size": "1.5em" }} disabled={isRecording}>
+                          <i className="ri-record-circle-line"></i>
                         </Button>
-                        <Button onClick={handleStopRecording} className="audio-button ms-2" style={{"font-size": "1.5em"}} disabled={!isRecording}>
-                          <i class="ri-stop-mini-line"></i>
+                        <Button onClick={handleStopRecording} className="audio-button ms-2" style={{ "font-size": "1.5em" }} disabled={!isRecording}>
+                          <i className="ri-stop-mini-line"></i>
                         </Button>
                       </div>
-                      
+
                       <Draggable handle=".drag-handle">
                         <div ref={guiContainerRef} style={{
-                            backgroundColor: "#000",
-                            position: 'absolute',
-                            top: '20px',
-                            right: '0px',
-                            display: 'inline-block',
-                          }}>
+                          backgroundColor: "#000",
+                          position: 'absolute',
+                          top: '20px',
+                          right: '0px',
+                          display: 'inline-block',
+                        }}>
 
-                          {audioFile ? 
+                          {audioFile ?
                             <div className="drag-handle" style={{
-                              height: '20px', 
-                              backgroundColor: "#333", 
+                              height: '20px',
+                              backgroundColor: "#333",
                               cursor: 'move'
-                              }}>
+                            }}>
                             </div>
                             : ""
                           }
                         </div>
-                      </Draggable>                  
-                      </div>
+                      </Draggable>
+                    </div>
                   </Col>
                 </Row>
-                
+
               </Card.Body>
             </Card>
           </Col>
-          
+
         </Row>
         <Row className="g-3 mt-4">
           <Col xl="12">
@@ -520,4 +535,3 @@ export default function UploadAudio() {
     </React.Fragment>
   );
 }
- 
