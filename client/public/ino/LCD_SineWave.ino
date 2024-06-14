@@ -1,16 +1,15 @@
 #include <LiquidCrystal.h>
 
-// Initialize the LCD
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);  // RS, E, D4, D5, D6, D7
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2); 
 
 const int columns = 16;
-const float sampleRate = 50.0;  // Sampling rate in Hz (lower for visual effect)
+const float sampleRate = 50.0;  
 const float twoPi = 6.28318530718;
-const float phaseIncrement = twoPi / columns;
-float globalPhase = 0.0;  // Global phase to shift the wave
-int sineFrequency = 293;  // Frequency of sine wave in Hz
+float globalPhase = 0.0;  
+bool enableWaveMovement = true;
 
-// Custom characters for different wave heights
+int micPin = A0;  
+
 byte waveShapes[8][8] = {
   {0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b11111},  // Lowest
   {0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b11111, 0b11111},
@@ -23,17 +22,33 @@ byte waveShapes[8][8] = {
 };
 
 void setup() {
-  lcd.begin(16, 2);  // Set up the LCD's number of columns and rows
+  lcd.begin(16, 2); 
+  pinMode(A0, INPUT);
+  Serial.begin(9600);
 
-  // Create custom characters
   for (int i = 0; i < 8; i++) {
     lcd.createChar(i, waveShapes[i]);
   }
 }
 
 void loop() {
+  int mn = 1024;
+  int mx = 0;
+
+  for (int i = 0; i < 100; ++i) {
+    int val = analogRead(micPin);
+    mn = min(mn, val);
+    mx = max(mx, val);
+  }
+
+  int delta = mx - mn;
+
+  Serial.println(delta);
+  int sineFrequency = map(delta, 0, 1023, 50, 1000); 
+  float phaseIncrement = twoPi * sineFrequency / sampleRate;  
+
   for (int col = 0; col < columns; col++) {
-    float currentAngle = globalPhase + phaseIncrement * col;
+    float currentAngle = enableWaveMovement ? globalPhase + phaseIncrement * col : phaseIncrement * col;
     float sineValue = sin(currentAngle);
     int waveIndex = map((int)(sineValue * 100), -100, 100, 0, 7);
 
@@ -41,17 +56,18 @@ void loop() {
     lcd.write(byte(waveIndex));
   }
 
-  globalPhase += phaseIncrement;
-  if (globalPhase >= twoPi) {
-    globalPhase -= twoPi;
+  if (enableWaveMovement) {
+    globalPhase += phaseIncrement;
+    if (globalPhase >= twoPi) {
+      globalPhase -= twoPi;  
+    }
   }
 
-  // Display the frequency and decibel on the second line
-  float decibel = 20 * log10(abs(sin(globalPhase) + 0.1));  // Calculate decibel from amplitude
+  float decibel = 20 * log10(delta / 10.0 + 0.1); 
   lcd.setCursor(0, 1);
-  lcd.print("FREQ:");
+  lcd.print("f:");
   lcd.print(sineFrequency);
-  lcd.print(" DEC:");
+  lcd.print(" dB:");
   lcd.print((int)decibel);
 
   delay(1000 / sampleRate);

@@ -4,7 +4,7 @@ import SimplexNoise from 'simplex-noise';
 const simplex = new SimplexNoise();
 
 const MatrixShape = {
-    prepare: function (scene, camera) {
+    prepare: function ({scene, camera, settings, gui, setSettingsCallback}) {
         const group = new THREE.Group();
         camera.position.set(0, 0, 100);
         camera.lookAt(scene.position);
@@ -56,10 +56,23 @@ const MatrixShape = {
 
         scene.add(group);
 
+        if(gui){  
+            const matrixFolder = gui.addFolder('MatrixShape Settings');
+            matrixFolder.addColor(settings, 'planeColor').onChange(value => setSettingsCallback('planeColor', value));
+            matrixFolder.addColor(settings, 'bigBallColor').onChange(value => setSettingsCallback('bigBallColor', value));
+            matrixFolder.addColor(settings, 'smallBallColor').onChange(value => setSettingsCallback('smallBallColor', value));
+            matrixFolder.add(settings, 'lightIntensity', 0, 2).onChange(value => setSettingsCallback('lightIntensity', value));
+            matrixFolder.add(settings, 'wireframeThickness', 0, 3).onChange(value => setSettingsCallback('wireframeThickness', value));
+            matrixFolder.open();
+        }
+
+
+        
+
         return { group, spotLight };
     },
 
-    animate: function ({ group, spotLight }, dataArray, composer, matrixSettings) {
+    animate: function ({ group, spotLight }, dataArray, composer, settings) {
         const makeRoughBall = (mesh, bassFr, treFr) => {
             const positions = mesh.geometry.attributes.position.array;
             const vertex = new THREE.Vector3();
@@ -130,12 +143,12 @@ const MatrixShape = {
 
         group.children.forEach((child, index) => {
             if (index < 4) {
-                child.material.color.set(matrixSettings[index < 2 ? 'planeColor' : index === 2 ? 'bigBallColor' : 'smallBallColor']);
-                child.material.wireframeLinewidth = matrixSettings.wireframeThickness;
+                child.material.color.set(settings[index < 2 ? 'planeColor' : index === 2 ? 'bigBallColor' : 'smallBallColor']);
+                child.material.wireframeLinewidth = settings.wireframeThickness;
             }
         });
 
-        spotLight.intensity = matrixSettings.lightIntensity;
+        spotLight.intensity = settings.lightIntensity;
 
         composer.render();
     },

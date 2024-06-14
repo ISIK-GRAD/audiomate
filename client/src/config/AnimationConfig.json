@@ -2,14 +2,23 @@
     "defaultAnimationName": "MatrixShape",
     "GlitchCircle" : {
         "name": "GlitchCircle",
-        "radius": 5,
-        "particleColor": "#00ff00",
-        "particleCount": "512",
-        "particleSize": 1,
-        "glitchEffect": true
+        "settings": {
+            "radius": 5,
+            "particleColor": "#00ff00",
+            "particleCount": "512",
+            "particleSize": 1,
+            "glitch": true
+        }
     },
     "MatrixShape": {
-        "name": "MatrixShape"
+        "name": "MatrixShape",
+        "settings": {
+            "planeColor": "#6904ce",
+            "bigBallColor": "#ff00ee",
+            "smallBallColor": "#34ebd2",
+            "lightIntensity": 0.9,
+            "wireframeThickness": 1
+        }
   },
     "SineWave": {
         "name": "SineWave",

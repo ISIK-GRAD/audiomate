@@ -28,26 +28,16 @@ export default function UploadAudio() {
   const [audioContext, setAudioContext] = useState(null);
   const [analyser, setAnalyser] = useState(null);
   const [dataArray, setDataArray] = useState(null);
-  const [settings, setSettings] = useState({
-    particleColor: '#00ff00',
-    particleSize: 1.0,
-    particleCount: 512,
-    radius: 10,
-    glitch: false,
-  });
-  const [matrixSettings, setMatrixSettings] = useState({
-    planeColor: '#6904ce',
-    bigBallColor: '#ff00ee',
-    smallBallColor: '#34ebd2',
-    lightIntensity: 0.9,
-    wireframeThickness: 1
-  });
+  
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioDuration, setAudioDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isRecording, setIsRecording] = useState(false);
   const [selectedAnimation, setSelectedAnimation] = useState(animationConfig[animationConfig.defaultAnimationName].name);
   const [animationName, setAnimationName] = useState("");
+  const [settings, setSettings] = useState({
+    ...animationConfig[animationConfig.defaultAnimationName].settings
+  });
 
   const canvasRef = useRef();
   const guiContainerRef = useRef();
@@ -60,6 +50,9 @@ export default function UploadAudio() {
 
   useEffect(() => {
     if (canvasRef.current && analyser) {
+
+      setSettings(animationConfig[selectedAnimation].settings);
+
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, canvasRef.current.clientWidth / canvasRef.current.clientHeight, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, antialias: true });
@@ -106,22 +99,18 @@ export default function UploadAudio() {
           animateGlitchCircle();
           break;
         case "MatrixShape":
-          const { group, spotLight } = MatrixShape.prepare(scene, camera);
+          const { group, spotLight } = MatrixShape.prepare({scene: scene, camera: camera, gui: gui, settings: settings, setSettingsCallback: updateSettings});
           groupRef.current = group;
           scene.add(group);
 
-          const matrixFolder = gui.addFolder('MatrixShape Settings');
-          matrixFolder.addColor(matrixSettings, 'planeColor').onChange(value => updateMatrixSettings('planeColor', value));
-          matrixFolder.addColor(matrixSettings, 'bigBallColor').onChange(value => updateMatrixSettings('bigBallColor', value));
-          matrixFolder.addColor(matrixSettings, 'smallBallColor').onChange(value => updateMatrixSettings('smallBallColor', value));
-          matrixFolder.add(matrixSettings, 'lightIntensity', 0, 2).onChange(value => updateMatrixSettings('lightIntensity', value));
-          matrixFolder.add(matrixSettings, 'wireframeThickness', 0, 3).onChange(value => updateMatrixSettings('wireframeThickness', value));
-          matrixFolder.open();
+          console.log("settings: ", settings);
+
+          
 
           const animateMatrixShape = () => {
             if (analyserRef.current) {
               analyserRef.current.getByteFrequencyData(dataArray);
-              MatrixShape.animate({ group: groupRef.current, spotLight }, dataArray, composer, matrixSettings);
+              MatrixShape.animate({ group: groupRef.current, spotLight }, dataArray, composer, settings);
             }
             requestAnimationFrame(animateMatrixShape);
           };
@@ -129,8 +118,7 @@ export default function UploadAudio() {
           break;
 
         case "SineWave":
-          const waveGroup = SineWave.prepare(scene);
-          camera.position.set(0,0,50);
+          const waveGroup = SineWave.prepare(scene, camera);
 
           const animateSineWave = () => {
             if (analyserRef.current) {
@@ -166,8 +154,8 @@ export default function UploadAudio() {
     };
   }, []);
 
-  const updateMatrixSettings = (key, value) => {
-    setMatrixSettings(prevState => ({
+  const updateSettings = (key, value) => {
+    setSettings(prevState => ({
       ...prevState,
       [key]: value
     }));
@@ -362,6 +350,7 @@ export default function UploadAudio() {
   const handleAnimationChange = (event) => {
     const newAnimation = event.target.value;
     setSelectedAnimation(newAnimation);
+    setSettings(animationConfig[newAnimation].settings);
   };
 
   const updateVisualization = () => {
@@ -385,7 +374,7 @@ export default function UploadAudio() {
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'LCD_SineWave.ino';
+      a.download = 'LCD_SineWave.txt';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

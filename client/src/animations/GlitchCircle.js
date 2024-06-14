@@ -4,7 +4,6 @@ const GUI = require('dat.gui');
 
 const GlitchCircle = {
     prepare: function ({settings, gui, glitchPass, setSettingsCallback}) {
-        // Create particles
         const particleCount = settings.particleCount;
         const particles = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
@@ -53,7 +52,6 @@ const GlitchCircle = {
             });
             gui.add(settings, 'particleCount', 100, 2000).name('Particle Count').onChange((value) => {
                 setSettingsCallback((prevSettings) => ({ ...prevSettings, particleCount: value }));
-                // Update particle count
                 const newPositions = new Float32Array(value * 3);
                 const newColors = new Float32Array(value * 3);
                 const newSizes = new Float32Array(value);
@@ -79,7 +77,6 @@ const GlitchCircle = {
             });
             gui.add(settings, 'radius', 1, 20).name('Radius').onChange((value) => {
                 setSettingsCallback((prevSettings) => ({ ...prevSettings, radius: value }));
-                // Update particle positions based on new radius
                 const positions = particleSystem.geometry.attributes.position.array;
                 for (let i = 0; i < particleCount; i++) {
                 const angle = (i / particleCount) * Math.PI * 2;

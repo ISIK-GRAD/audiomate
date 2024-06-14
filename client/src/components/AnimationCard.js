@@ -32,6 +32,7 @@ const AnimationCard = ({ animation }) => {
   const controls = useRef(null);
 
   const groupRef = useRef(null);
+  const spotlightRef = useRef(null);
 
   const particleSystem = useRef(null);
 
@@ -72,7 +73,9 @@ const AnimationCard = ({ animation }) => {
     switch (animationType) {
       case 'MatrixShape':
         console.log(MatrixShape);
-        groupRef.current = MatrixShape.prepare(scene, cameraRef.current);
+        const {group, spotLight} = MatrixShape.prepare({scene: scene, camera: cameraRef.current, settings: settings});
+        groupRef.current = group;
+        spotlightRef.current = spotLight;
         break;
       case 'GlitchCircle':
         composer.addPass(glitchPass);
@@ -114,7 +117,7 @@ const AnimationCard = ({ animation }) => {
         analyserRef.current.getByteFrequencyData(dataArray);
         switch (animationType) {
           case 'MatrixShape':
-            MatrixShape.animate(groupRef.current, dataArray, composerRef.current);
+            MatrixShape.animate({group: groupRef.current, spotLight: spotlightRef.current}, dataArray, composerRef.current, settings);
             break;
           case 'GlitchCircle':
             GlitchCircle.animate({
